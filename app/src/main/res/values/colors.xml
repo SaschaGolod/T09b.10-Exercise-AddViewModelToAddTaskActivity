@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- colors for general appearance -->
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimaryLight">#C5CAE9</color>
+    <color name="colorAccent">#303F9F</color>
+
+    <!-- colors taskEntrytask priority selection -->
+
+    <color name="materialWhite">#C5CAE9</color>
+    <color name="materialYellow">#F1C40F</color>
+    <color name="materialGreen">#669900</color>
+    <color name="materialBlue">#303F9F</color>
+    <color name="materialRed">#CD3220</color>
+    <color name="materialBlack">#7C3535</color>
+
+    <!-- colors StoneColor selection -->
+    <color name="Stone_weiß">#C5CAE9</color>
+    <color name="Stone_gelb">#FFF220</color>
+    <color name="Stone_hellgruen">#00B356</color>
+    <color name="Stone_hellblue">#00A4E9</color>
+    <color name="Stone_blue">#303F9F</color>
+    <color name="Stone_rot">#CD3220</color>
+    <color name="Stone_schwarzer">#000000</color>
+    <color name="Stone_lila">#B145A0</color>
+    <color name="Stone_orange">#FF7600</color>
+    <color name="Stone_pink">#FF00C5</color>
+
+</resources>

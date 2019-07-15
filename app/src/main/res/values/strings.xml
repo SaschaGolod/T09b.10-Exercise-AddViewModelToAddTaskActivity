@@ -1,0 +1,99 @@
+<resources>
+    <string name="app_name">To-Do List</string>
+    <string name="main_activity_name">All Tasks</string>
+    <string name="add_task_activity_name">Add a New Task</string>
+
+    <!-- Strings for MainActivity -->
+    <string name="priority_1">1</string>
+    <string name="priority_2">2</string>
+    <string name="priority_3">3</string>
+
+    <!-- Strings for AddTaskActivity -->
+    <!-- This etaskEntrytask has a unicode character for "..." = "&#8230;" -->
+    <string name="edit_task_description">Name&#8230;</string>
+
+    <!-- Todo Kategories Hardcode im Quellcode löschen-->
+    <string-array name="kategories">
+        <item>Amulett</item>
+        <item>Beule</item>
+        <item>Drehblock</item>
+        <item>Komet</item>
+        <item>Pyramide</item>
+        <item>Turm</item>
+        <item>Kurve</item>
+        <item>Würfel</item>
+    </string-array>
+    <string-array name="Walls">
+        <item> - </item>
+        <item>Amulett 1 (links)</item>
+        <item>Amulett 2 (rechts)</item>
+        <item>Beule 1 (links)</item>
+        <item>Beule 2</item>
+        <item>Beule 3 (rechts)</item>
+        <item>Drehblock 1</item>
+        <item>Drehblock 2</item>
+        <item>Drehblock 3</item>
+        <item>Drehblock 4</item>
+        <item>Drehblock 5</item>
+        <item>Drehblock 6</item>
+        <item>Drehblock 7</item>
+        <item>Komet 1 (links)</item>
+        <item>Komet 2</item>
+        <item>Komet 3 (rechts)</item>
+        <item>Pyramide 1 (links)</item>
+        <item>Pyramide 2</item>
+        <item>Pyramide 3 (rechts)</item>
+        <item>Turm 1 (links)</item>
+        <item>Turm 2</item>
+        <item>Turm 3</item>
+        <item>Turm 4 (rechts)</item>
+        <item>Kurve 1 (links)</item>
+        <item>Kurve 2</item>
+        <item>Kurve 3 (rechts)</item>
+        <item>Würfel 1 (links)</item>
+        <item>Würfel 2</item>
+        <item>Würfel 3 (rechts)</item>
+    </string-array>
+
+    <string-array name="mStoneColors">
+        <item>weiß</item>
+        <item>gelb</item>
+        <item>hellgruen</item>
+        <item>hellblue</item>
+        <item>blue</item>
+        <item>rot</item>
+        <item>schwarzer</item>
+        <item>lila</item>
+        <item>orange</item>
+        <item>pink</item>
+    </string-array>
+
+    <string name="priority_string">Schwierigkeitsstufe</string>
+
+    <string name="lvl1">1⃣</string>
+    <string name="lvl2">2⃣</string>
+    <string name="lvl3">3⃣</string>
+    <string name="lvl4">4⃣</string>
+    <string name="lvl5">5⃣</string>
+    <string name="lvl6">6⃣</string>
+
+    <string name="add_button">Add</string>
+    <string name="update_button">Update</string>
+    <string name="settings">Settings</string>
+    <string name="key_lvl_1">lvl_1</string>
+    <string name="key_lvl_2">lvl_2</string>
+    <string name="key_lvl_3">lvl_3</string>
+    <string name="key_lvl_4">lvl_4</string>
+    <string name="key_lvl_5">lvl_5</string>
+    <string name="key_lvl_6">lvl_6</string>
+    <string name="akzeptieren">Akzeptieren</string>
+
+    <string name="ClickflashhStatus">f</string>
+    <string name="ClicktopStatus">t</string>
+    <string name="ClickprojektStatus">p</string>
+    <string name="pref_key_all_lvl">pref_key_all_lvl</string>
+    <string name="pref_key_status">pref_key_status</string>
+    <string name="boulderitem_status_default_value">x</string>
+    <string name="settings_title1">Weiß</string>
+
+</resources>
