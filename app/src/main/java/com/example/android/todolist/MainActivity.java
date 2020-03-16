@@ -16,6 +16,7 @@
 
 package com.example.android.todolist;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -25,8 +26,10 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import androidx.annotation.Nullable;
 
+import com.example.android.todolist.adapters.DemoHeaderFooterAdapter;
 import com.example.android.todolist.adapters.OnListItemClickMessageListener;
 import com.example.android.todolist.adapters.SimpleDemoItemAdapter;
+import com.example.android.todolist.adapters.SwipeToDeleteCallback;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -44,6 +47,7 @@ import android.widget.Toast;
 
 import com.example.android.todolist.database.AppDatabase;
 import com.example.android.todolist.database.TaskEntry;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 
 import org.json.JSONObject;
 
@@ -53,32 +57,23 @@ import java.util.List;
 
 import static androidx.recyclerview.widget.DividerItemDecoration.VERTICAL;
 
+/*
+ * This example shows very very minimal implementation of header and footer feature.
+ * Please refer to other examples for more advanced usages. Thanks!
+ */
 
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    // Constant for logging
-    private static final String TAG = MainActivity.class.getSimpleName();
-    // Member variables for the adapter and RecyclerView
-    private RecyclerView mRecyclerView;
-    private SimpleDemoItemAdapter mAdapter;
-
     private AppDatabase mDb;
+    private List<TaskEntry> listTaskEntries;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        // Set the RecyclerView to its corresponding view
-        mRecyclerView = findViewById(R.id.recyclerViewTasks);
+        setContentView(R.layout.activity_header_footer);
 
-        // Set the layout for the RecyclerView to be a linear layout, which measures and
-        // positions items within a RecyclerView into a linear list
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        // Initialize the adapter and attach it to the RecyclerView
-        /*mAdapter = new TaskAdapter(this, new CustomItemClickListener() {
-
+        OnListItemClickMessageListener clickListener = new OnListItemClickMessageListener() {
             @Override
             public void onItemClickListener(int itemId) {
                 // Launch AddTaskActivity adding the itemId as an extra in the intent
@@ -101,148 +96,67 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             public void OnProjektClicked(int itemId) {
                 PerformOnItemClicked(itemId, getString(R.string.ClickprojektStatus));
             }
-        });
-        */
-        mAdapter = new SimpleDemoItemAdapter(new OnListItemClickMessageListener() {
-            @Override
-            public void onItemClickListener(int itemId) {
-
-            }
-
-            @Override
-            public void OnFlashClicked(int itemId) {
-
-            }
-
-            @Override
-            public void OnTopClicked(int itemId) {
-
-            }
-
-            @Override
-            public void OnProjektClicked(int itemId) {
-
-            }
 
             @Override
             public void startActivitySettings() {
-
+                PerformStartFilterActivity();
             }
-        });
-        mRecyclerView.setAdapter(mAdapter);
+        };
 
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        RecyclerView.Adapter adapter = new SimpleDemoItemAdapter(clickListener);
 
-        DividerItemDecoration decoration = new DividerItemDecoration(getApplicationContext(), VERTICAL);
-        mRecyclerView.addItemDecoration(decoration);
+        setUpViewModel(adapter);
+        adapter = new DemoHeaderFooterAdapter(adapter, clickListener);
 
-        /*
-         Add a touch helper to the RecyclerView to recognize when a user swipes to delete an item.
-         An ItemTouchHelper enables touch behavior (like swipe and move) on each ViewHolder,
-         and uses callbacks to signal when a user is performing these actions.
-         */
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        enableSwipeToDelete(recyclerView);
+
+        setFabButton();
+        mDb = AppDatabase.getInstance(getApplicationContext());
+    }
+
+    private void PerformStartFilterActivity() {
+        Intent startSettingsActivity = new Intent(this, SettingsActivity.class);
+        startActivity(startSettingsActivity);
+    }
+
+    private void enableSwipeToDelete(RecyclerView recyclerView) {
+        SwipeToDeleteCallback swipeToDeleteCallback = new SwipeToDeleteCallback(this) {
             @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                return false;
-            }
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
 
-            // Called when a user swipes left or right on a ViewHolder
-            @Override
-            public void onSwiped(final RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 // Here is where you'll implement swipe to delete
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
                         int position = viewHolder.getAdapterPosition();
-                        List<TaskEntry> tasks = mAdapter.getTasks();
-                        mDb.taskDao().deleteTask(tasks.get(position));
+                        //Es funktioniert also lass ich das so mit "position -1"
+                        mDb.taskDao().deleteTask(listTaskEntries.get(position-1));
                     }
                 });
+                //Toast.makeText(getApplicationContext(), "Swiped", Toast.LENGTH_SHORT).show();
             }
-        }).attachToRecyclerView(mRecyclerView);
+        };
 
-        /*
-         Set the Floating Action Button (FAB) to its corresponding View.
-         Attach an OnClickListener to it, so that when it's clicked, a new intent will be created
-         to launch the AddTaskActivity.
-         */
+        ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToDeleteCallback);
+        itemTouchhelper.attachToRecyclerView(recyclerView);
+    }
+
+    private void setFabButton() {
+    /*
+    Set the Floating Action Button (FAB) to its corresponding View.
+    Attach an OnClickListener to it, so that when it's clicked, a new intent will be created
+    to launch the AddTaskActivity.
+    */
         FloatingActionButton fabButton = findViewById(R.id.fab);
 
-        fabButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Create a new intent to start an AddTaskActivity
-                Intent addTaskIntent = new Intent(MainActivity.this, AddTaskActivity.class);
-                startActivity(addTaskIntent);
-            }
-        });
-
-        mDb = AppDatabase.getInstance(getApplicationContext());
-        setupViewModel();
-
-        setupSharedPreferences();
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).unregisterOnSharedPreferenceChangeListener(this);
-    }
-
-    private String setupSharedPreferences() {
-        String lvlfilter = "";
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
-
-        if(sharedPreferences.getBoolean(getString(R.string.key_lvl_1), true))
-        {
-            lvlfilter += "1";
-        }
-        if(sharedPreferences.getBoolean(getString(R.string.key_lvl_2), true))
-        {
-            lvlfilter += "2";
-        }
-        if(sharedPreferences.getBoolean(getString(R.string.key_lvl_3), true))
-        {
-            lvlfilter += "3";
-        }if(sharedPreferences.getBoolean(getString(R.string.key_lvl_4), true))
-        {
-            lvlfilter += "4";
-        }
-        if(sharedPreferences.getBoolean(getString(R.string.key_lvl_5), true))
-        {
-            lvlfilter += "5";
-        }
-        if(sharedPreferences.getBoolean(getString(R.string.key_lvl_6), true))
-        {
-            lvlfilter += "6";
-        }
-        return lvlfilter;
-    }
-
-    private void setupViewModel() {
-
-        MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-        viewModel.getTasks().observe(this, new Observer<List<TaskEntry>>() {
-            @Override
-            public void onChanged(@Nullable List<TaskEntry> taskEntries) {
-                //Hier wird die Liste sortiert nach dem Namen der Kategorie der Routen
-                Collections.sort(taskEntries, new Comparator<TaskEntry>() {
-                    @Override
-                    public int compare(TaskEntry o1, TaskEntry o2) {
-                        return o1.getKategorieWall().compareTo(o2.getKategorieWall());
-                    }
-                });
-                Log.d(TAG, "Updating list of tasks from LiveData in ViewModel");
-
-                mAdapter.setTasks(taskEntries);
-                String lvlfilter = setupSharedPreferences();
-
-                CreateJsonAndFilter(lvlfilter);
-            }
+        fabButton.setOnClickListener(view -> {
+            // Create a new intent to start an AddTaskActivity
+            Intent addTaskIntent = new Intent(MainActivity.this, AddTaskActivity.class);
+            startActivity(addTaskIntent);
         });
     }
 
@@ -258,15 +172,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(TAG, "TaskId of Task is:" + taskEntry.getId());
-                        Log.d(TAG, "Old Projekt status:" + taskEntry.getStatus());
-                        Log.d(TAG, "Change Projekt status to:" + getStatus(taskEntry, aktionString));
                         taskEntry.setId(itemId);
                         taskEntry.setStatus(getStatus(taskEntry, aktionString));
                         mDb.taskDao().updateTask(taskEntry);
                     }
                 });
-                Log.d(TAG, "Update performed");
             }
 
             private String getStatus(TaskEntry taskEntry, String aktionString) {
@@ -279,6 +189,19 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         });
 
     }
+
+    private void setUpViewModel(RecyclerView.Adapter adapter) {
+        MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        RecyclerView.Adapter finalAdapter = adapter;
+        viewModel.getTasks().observe(this, taskEntries -> {
+            //Hier wird die Liste sortiert nach dem Namen der Kategorie der Routen
+            Collections.sort(taskEntries, (o1, o2) -> o1.getKategorieWall().compareTo(o2.getKategorieWall()));
+
+            ((SimpleDemoItemAdapter) finalAdapter).setTasks(taskEntries);
+            listTaskEntries = taskEntries;
+        });
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -295,62 +218,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             startActivity(startSettingsActivity);
             return true;
         }
-
-        if(id == R.id.test_screen)
-        {
-            Intent startTestActity = new Intent(this, HeaderFooterActivity.class);
-            startActivity(startTestActity);
-            return true;
-        }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        String lvlfilter = "";
-
-        if(sharedPreferences.getBoolean(getString(R.string.key_lvl_1), true))
-        {
-            lvlfilter += "1";
-        }
-        if(sharedPreferences.getBoolean(getString(R.string.key_lvl_2), true))
-        {
-            lvlfilter += "2";
-        }
-        if(sharedPreferences.getBoolean(getString(R.string.key_lvl_3), true))
-        {
-            lvlfilter += "3";
-        }if(sharedPreferences.getBoolean(getString(R.string.key_lvl_4), true))
-        {
-            lvlfilter += "4";
-        }
-        if(sharedPreferences.getBoolean(getString(R.string.key_lvl_5), true))
-        {
-            lvlfilter += "5";
-        }
-        if(sharedPreferences.getBoolean(getString(R.string.key_lvl_6), true))
-        {
-            lvlfilter += "6";
-        }
-
-        CreateJsonAndFilter(lvlfilter);
-    }
-
-    private void CreateJsonAndFilter(String lvlfilter) {
-
-        //Todo hier muss noch ein Filter für Todo
-        JSONObject jsonData = new JSONObject();
-        try{
-            jsonData.put(getString(R.string.pref_key_all_lvl),lvlfilter);
-            //Todo mache x den Wert der Buttons oben mit x, p, d,
-            jsonData.put(getString(R.string.pref_key_status), getResources().getString(R.string.boulderitem_status_default_value));
-        }catch (Exception e)
-        {
-            Toast.makeText(getApplicationContext(), "Fehler filter", Toast.LENGTH_SHORT).show();
-        }
-        Log.d(TAG, "Json Data is: " + jsonData.toString());
-
-        //mAdapter.getFilter().filter(jsonData.toString());
     }
 }
-

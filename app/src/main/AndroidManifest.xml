@@ -10,7 +10,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".HeaderFooterActivity"></activity>
         <!-- The manifest entry for the MainActivity -->
         <activity
             android:name=".MainActivity"
