@@ -148,20 +148,6 @@ public class DemoHeaderFooterAdapter
         todoCheckbox.setChecked(false);
         doneCheckbox.setChecked(false);
 
-        filterImage.setOnClickListener(v -> mOnItemClickListener.startActivitySettings());
-
-        todoCheckbox.setOnClickListener(v -> {
-            if(!todoBool)
-            {
-                todoCheckbox.setChecked(true);
-                todoBool = true;
-
-            }else{
-                todoCheckbox.setChecked(false);
-                todoBool = false;
-            }
-        });
-
         doneCheckbox.setOnClickListener(v -> {
             if(!doneBool)
             {

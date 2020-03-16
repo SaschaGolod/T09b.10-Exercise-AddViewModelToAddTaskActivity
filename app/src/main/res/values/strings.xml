@@ -95,5 +95,8 @@
     <string name="pref_key_status">pref_key_status</string>
     <string name="boulderitem_status_default_value">x</string>
     <string name="settings_title1">Weiß</string>
+    <string name="todo">Todo</string>
+    <string name="projekt">Projekt</string>
+    <string name="done">Done</string>
 
 </resources>

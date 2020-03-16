@@ -12,24 +12,33 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Todo"
-        android:textColor="@color/materialWhite" />
+        android:text="@string/todo"
+        android:textColor="@color/materialWhite"
+        android:buttonTint="@color/materialWhite"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <CheckBox
         android:id="@+id/doneCheckboxID"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Done"
-        android:textColor="@color/materialWhite" />
+        android:text="@string/done"
+        android:textColor="@color/materialWhite"
+        android:buttonTint="@color/materialWhite"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <CheckBox
         android:id="@+id/projektCheckboxID"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Projekt"
-        android:textColor="@color/materialWhite" />
+        android:text="@string/projekt"
+        android:textColor="@color/materialWhite"
+        android:buttonTint="@color/materialWhite"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/filterImageID"

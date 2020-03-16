@@ -97,10 +97,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 PerformOnItemClicked(itemId, getString(R.string.ClickprojektStatus));
             }
 
-            @Override
-            public void startActivitySettings() {
-                PerformStartFilterActivity();
-            }
         };
 
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
@@ -116,6 +112,18 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         setFabButton();
         mDb = AppDatabase.getInstance(getApplicationContext());
+    }
+
+    private void PerformFiltering(boolean todo, boolean done, boolean projekt) {
+        if(todo)
+        {
+            Toast.makeText(getApplicationContext(), "Todo", Toast.LENGTH_SHORT).show();
+        }else if(done)
+        {
+            Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(getApplicationContext(), "Projekt", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void PerformStartFilterActivity() {
