@@ -119,8 +119,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
     private void PerformStartFilterActivity() {
-        Intent startSettingsActivity = new Intent(this, SettingsActivity.class);
-        startActivity(startSettingsActivity);
+
     }
 
     private void enableSwipeToDelete(RecyclerView recyclerView) {
@@ -200,25 +199,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             ((SimpleDemoItemAdapter) finalAdapter).setTasks(taskEntries);
             listTaskEntries = taskEntries;
         });
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.main_settings) {
-            Intent startSettingsActivity = new Intent(this, SettingsActivity.class);
-            startActivity(startSettingsActivity);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
