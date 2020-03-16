@@ -24,6 +24,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import androidx.annotation.Nullable;
+
+import com.example.android.todolist.adapters.OnListItemClickMessageListener;
+import com.example.android.todolist.adapters.SimpleDemoItemAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -57,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private static final String TAG = MainActivity.class.getSimpleName();
     // Member variables for the adapter and RecyclerView
     private RecyclerView mRecyclerView;
-    private TaskAdapter mAdapter;
+    private SimpleDemoItemAdapter mAdapter;
 
     private AppDatabase mDb;
 
@@ -74,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Initialize the adapter and attach it to the RecyclerView
-        mAdapter = new TaskAdapter(this, new CustomItemClickListener() {
+        /*mAdapter = new TaskAdapter(this, new CustomItemClickListener() {
 
             @Override
             public void onItemClickListener(int itemId) {
@@ -97,6 +100,33 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             @Override
             public void OnProjektClicked(int itemId) {
                 PerformOnItemClicked(itemId, getString(R.string.ClickprojektStatus));
+            }
+        });
+        */
+        mAdapter = new SimpleDemoItemAdapter(new OnListItemClickMessageListener() {
+            @Override
+            public void onItemClickListener(int itemId) {
+
+            }
+
+            @Override
+            public void OnFlashClicked(int itemId) {
+
+            }
+
+            @Override
+            public void OnTopClicked(int itemId) {
+
+            }
+
+            @Override
+            public void OnProjektClicked(int itemId) {
+
+            }
+
+            @Override
+            public void startActivitySettings() {
+
             }
         });
         mRecyclerView.setAdapter(mAdapter);
@@ -320,7 +350,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
         Log.d(TAG, "Json Data is: " + jsonData.toString());
 
-        mAdapter.getFilter().filter(jsonData.toString());
+        //mAdapter.getFilter().filter(jsonData.toString());
     }
 }
 

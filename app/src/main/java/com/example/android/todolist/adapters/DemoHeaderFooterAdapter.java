@@ -125,7 +125,7 @@ public class DemoHeaderFooterAdapter
         }
 
         //Todo On Item Clicked implementieren
-        //mOnItemClickListener.startActivitySettings();
+       // mOnItemClickListener.startActivitySettings();
     }
 
     // --------------------------------------------
@@ -162,33 +162,27 @@ public class DemoHeaderFooterAdapter
             }
         });
 
-        doneCheckbox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!doneBool)
-                {
-                    doneCheckbox.setChecked(true);
-                    doneBool = true;
-                }else{
-                    doneCheckbox.setChecked(false);
-                    doneBool = false;
-                }
+        doneCheckbox.setOnClickListener(v -> {
+            if(!doneBool)
+            {
+                doneCheckbox.setChecked(true);
+                doneBool = true;
+            }else{
+                doneCheckbox.setChecked(false);
+                doneBool = false;
             }
         });
 
-        projektCheckbox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!projektBool)
-                {
-                    projektCheckbox.setChecked(true);
-                    projektBool = true;
-                }else{
-                    projektCheckbox.setChecked(false);
-                    projektBool = false;
-                }
-
+        projektCheckbox.setOnClickListener(v -> {
+            if(!projektBool)
+            {
+                projektCheckbox.setChecked(true);
+                projektBool = true;
+            }else{
+                projektCheckbox.setChecked(false);
+                projektBool = false;
             }
+
         });
     }
 
