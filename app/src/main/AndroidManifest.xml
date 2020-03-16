@@ -23,10 +23,6 @@
         <activity
             android:name=".AddTaskActivity"
             android:label="@string/add_task_activity_name" />
-        <activity
-            android:name=".SettingsActivity"
-            android:label="Settings"
-            android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>
