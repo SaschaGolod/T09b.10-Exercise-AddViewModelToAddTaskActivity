@@ -40,10 +40,6 @@ public class DemoHeaderFooterAdapter
         }
     }
 
-    public DemoHeaderFooterAdapter(RecyclerView.Adapter adapter) {
-        this(adapter, null);
-    }
-
     public DemoHeaderFooterAdapter(RecyclerView.Adapter adapter, OnListItemClickMessageListener clickListener) {
         setAdapter(adapter);
         mOnItemClickListener = clickListener;
@@ -111,7 +107,6 @@ public class DemoHeaderFooterAdapter
             throw new IllegalStateException("Something wrong.");
         }
 
-        //Todo On Item Clicked implementieren
         mOnItemClickListener.onItemClicked(message);
     }
 
