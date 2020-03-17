@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 
 import com.example.android.todolist.R;
 import com.h6ah4i.android.widget.advrecyclerview.utils.RecyclerViewAdapterUtils;
@@ -19,14 +18,13 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 public class DemoHeaderFooterAdapter
         extends AbstractHeaderFooterWrapperAdapter<DemoHeaderFooterAdapter.HeaderViewHolder, DemoHeaderFooterAdapter.FooterViewHolder>
         implements View.OnClickListener {
-    OnListItemClickMessageListener mOnItemClickListener;
-    CheckBox todoCheckbox;
-    CheckBox doneCheckbox;
-    CheckBox projektCheckbox;
-    ImageView filterImage;
+    private OnListItemClickMessageListener mOnItemClickListener;
+    private CheckBox todoCheckbox;
+    private CheckBox doneCheckbox;
+    private CheckBox projektCheckbox;
 
     class HeaderViewHolder extends RecyclerView.ViewHolder {
-        public HeaderViewHolder(View itemView) {
+        HeaderViewHolder(View itemView) {
             super(itemView);
 
             todoCheckbox = itemView.findViewById(R.id.todoCheckboxID);
@@ -36,7 +34,7 @@ public class DemoHeaderFooterAdapter
     }
 
     static class FooterViewHolder extends RecyclerView.ViewHolder {
-        public FooterViewHolder(View itemView) {
+        FooterViewHolder(View itemView) {
             super(itemView);
 
         }
@@ -132,11 +130,30 @@ public class DemoHeaderFooterAdapter
     public void onBindHeaderItemViewHolder(@NonNull HeaderViewHolder holder, int localPosition) {
         applyFullSpanForStaggeredGridLayoutManager(holder);
 
-        todoCheckbox.setOnClickListener(v -> mOnItemClickListener.onItemClicked("todo"));
+        todoCheckbox.setOnClickListener(v -> {
+            if(todoCheckbox.isChecked())
+            mOnItemClickListener.onItemClicked("todo checked");
+            doneCheckbox.setChecked(false);
+        });
 
-        doneCheckbox.setOnClickListener(v -> mOnItemClickListener.onItemClicked("done"));
+        doneCheckbox.setOnClickListener(v -> {
+            if(doneCheckbox.isChecked())
+            {
+                mOnItemClickListener.onItemClicked("done checked");
+                todoCheckbox.setChecked(false);
+                projektCheckbox.setChecked(false);
+            }
+        });
 
-        projektCheckbox.setOnClickListener(v -> mOnItemClickListener.onItemClicked("projekt"));
+        projektCheckbox.setOnClickListener(v -> {
+            if(projektCheckbox.isChecked())
+            {
+                mOnItemClickListener.onItemClicked("projekt checked");
+                doneCheckbox.setChecked(false);
+                todoCheckbox.setChecked(true);
+            }
+
+        });
 
     }
 
@@ -146,7 +163,7 @@ public class DemoHeaderFooterAdapter
     }
 
     // Filling span for GridLayoutManager
-    protected void setupFullSpanForGridLayoutManager(RecyclerView recyclerView) {
+    private void setupFullSpanForGridLayoutManager(RecyclerView recyclerView) {
         RecyclerView.LayoutManager lm = recyclerView.getLayoutManager();
         if (!(lm instanceof GridLayoutManager)) {
             return;
@@ -172,7 +189,7 @@ public class DemoHeaderFooterAdapter
         });
     }
 
-    protected void applyFullSpanForStaggeredGridLayoutManager(RecyclerView.ViewHolder holder) {
+    private void applyFullSpanForStaggeredGridLayoutManager(RecyclerView.ViewHolder holder) {
         ViewGroup.LayoutParams lp = holder.itemView.getLayoutParams();
 
         // Filling span for StaggeredGridLayoutManager
