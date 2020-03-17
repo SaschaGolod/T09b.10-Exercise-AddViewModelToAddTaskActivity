@@ -8,4 +8,6 @@ public interface OnListItemClickMessageListener {
     void OnTopClicked(int itemId);
 
     void OnProjektClicked(int itemId);
+
+    void onItemClicked(String message);
 }
