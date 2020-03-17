@@ -160,7 +160,7 @@ public class TaskEntry {
     }
 
     public String setKategorieWall() {
-        //Todo HardCode entfernen
+        //Todo keine priorität HardCode entfernen
         List<String> kategorie = new ArrayList<>();
         kategorie.add("Amulett");
         kategorie.add("Beule");

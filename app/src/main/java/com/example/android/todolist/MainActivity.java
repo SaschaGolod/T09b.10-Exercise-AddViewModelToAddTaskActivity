@@ -19,10 +19,8 @@ package com.example.android.todolist;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.example.android.todolist.adapters.DemoHeaderFooterAdapter;
-import com.example.android.todolist.adapters.MyItemFilteringAdapter;
 import com.example.android.todolist.adapters.OnListItemClickMessageListener;
 import com.example.android.todolist.adapters.SimpleDemoItemAdapter;
 import com.example.android.todolist.adapters.SwipeToDeleteCallback;
@@ -91,29 +89,30 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
             @Override
             public void onItemClicked(String message) {
-                if(message.equals("todo"))
-                {
-                    TodoChecked = true;
-                    DoneChecked = false;
-                    ProjektChecked = false;
-                }else if(message.equals("done"))
-                {
-                    DoneChecked = true;
+                switch (message) {
+                    case "todo":
+                        TodoChecked = true;
+                        DoneChecked = false;
+                        ProjektChecked = false;
+                        break;
+                    case "done":
+                        DoneChecked = true;
 
-                }else if(message.equals("projekt"))
-                {
-                    ProjektChecked = true;
-                    TodoChecked = true;
-                    DoneChecked = false;
-                }else {
-                    ProjektChecked = false;
-                    TodoChecked = false;
-                    DoneChecked = false;
+                        break;
+                    case "projekt":
+                        ProjektChecked = true;
+                        TodoChecked = true;
+                        DoneChecked = false;
+                        break;
+                    default:
+                        ProjektChecked = false;
+                        TodoChecked = false;
+                        DoneChecked = false;
+                        break;
                 }
             }
 
-            //Todo Jetzt muss ich noch die Liste aktualieseieren, damit es was macht.
-            // Jetzt aktualiesiert die Liste immer, wenn ich auf einen Button klicke :)
+            //Todo Bug liste aktualiesieren fehlt
 
         };
 
@@ -122,9 +121,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         setUpViewModel(adapter);
         adapter = new DemoHeaderFooterAdapter(adapter, clickListener);
 
-        //Todo hier mache ich ein FilterAdapter noch zusätzlich rein??????????????????????
-        //Würde am liebsten eine einfache lösung haben.
-        adapter = new MyItemFilteringAdapter(adapter);
+        //Todo Todo Bug liste aktualiesieren fehlt
+        //adapter = new MyItemFilteringAdapter(adapter);
 
 
         recyclerView.setAdapter(adapter);
@@ -142,13 +140,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
 
                 // Here is where you'll implement swipe to delete
-                AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        int position = viewHolder.getAdapterPosition();
-                        //Es funktioniert also lass ich das so mit "position -1"
-                        mDb.taskDao().deleteTask(listTaskEntries.get(position - 1));
-                    }
+                AppExecutors.getInstance().diskIO().execute(() -> {
+                    int position = viewHolder.getAdapterPosition();
+                    //Es funktioniert also lass ich das so mit "position -1"
+                    mDb.taskDao().deleteTask(listTaskEntries.get(position - 1));
                 });
                 //Toast.makeText(getApplicationContext(), "Swiped", Toast.LENGTH_SHORT).show();
             }
@@ -182,13 +177,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             @Override
             public void onChanged(@Nullable final TaskEntry taskEntry) {
                 task.removeObserver(this);
-                AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        taskEntry.setId(itemId);
-                        taskEntry.setStatus(getStatus(taskEntry, aktionString));
-                        mDb.taskDao().updateTask(taskEntry);
-                    }
+                AppExecutors.getInstance().diskIO().execute(() -> {
+                    assert taskEntry != null;
+                    taskEntry.setId(itemId);
+                    taskEntry.setStatus(getStatus(taskEntry, aktionString));
+                    mDb.taskDao().updateTask(taskEntry);
                 });
             }
 
@@ -205,19 +198,16 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private void setUpViewModel(RecyclerView.Adapter adapter) {
         MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-        RecyclerView.Adapter finalAdapter = adapter;
         viewModel.getTasks().observe(this, (List<TaskEntry> taskEntries) -> {
 
             //Hier wird die Liste sortiert nach dem Namen der Kategorie der Routen
-            Collections.sort(taskEntries, (TaskEntry o1, TaskEntry o2) -> {
-                return o1.getKategorieWall().compareTo(o2.getKategorieWall());
-            });
+            Collections.sort(taskEntries, (TaskEntry o1, TaskEntry o2) -> o1.getKategorieWall().compareTo(o2.getKategorieWall()));
 
 
             //Filter für "Nur Done anzeigen"
             if (DoneChecked) {
                 for (int i = 0; i < taskEntries.size(); i++) {
-                    if (!(taskEntries.get(i).getStatus().equals("f")||taskEntries.get(i).getStatus().equals("t"))) {
+                    if (!(taskEntries.get(i).getStatus().equals("f") || taskEntries.get(i).getStatus().equals("t"))) {
                         taskEntries.remove(i);
                         i--;
                     }
@@ -231,14 +221,14 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 }
             } else if (TodoChecked) {
                 for (int i = 0; i < taskEntries.size(); i++) {
-                    if ((taskEntries.get(i).getStatus().equals("f")||taskEntries.get(i).getStatus().equals("t"))) {
+                    if ((taskEntries.get(i).getStatus().equals("f") || taskEntries.get(i).getStatus().equals("t"))) {
                         taskEntries.remove(i);
                         i--;
                     }
                 }
             }
 
-            ((SimpleDemoItemAdapter) finalAdapter).setTasks(taskEntries);
+            ((SimpleDemoItemAdapter) adapter).setTasks(taskEntries);
             listTaskEntries = taskEntries;
 
         });
