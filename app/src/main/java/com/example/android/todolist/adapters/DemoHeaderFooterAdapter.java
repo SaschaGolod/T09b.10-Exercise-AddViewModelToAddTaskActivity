@@ -130,31 +130,44 @@ public class DemoHeaderFooterAdapter
     public void onBindHeaderItemViewHolder(@NonNull HeaderViewHolder holder, int localPosition) {
         applyFullSpanForStaggeredGridLayoutManager(holder);
 
+        SetOnClickListener();
+
+    }
+
+    private void SetOnClickListener() {
         todoCheckbox.setOnClickListener(v -> {
-            if(todoCheckbox.isChecked())
-            mOnItemClickListener.onItemClicked("todo checked");
-            doneCheckbox.setChecked(false);
+            if (todoCheckbox.isChecked()) {
+                mOnItemClickListener.onItemClicked("todo");
+                doneCheckbox.setChecked(false);
+            } else {
+                mOnItemClickListener.onItemClicked("x");
+                projektCheckbox.setChecked(false);
+            }
+
         });
 
         doneCheckbox.setOnClickListener(v -> {
-            if(doneCheckbox.isChecked())
-            {
-                mOnItemClickListener.onItemClicked("done checked");
+            if (doneCheckbox.isChecked()) {
+                mOnItemClickListener.onItemClicked("done");
                 todoCheckbox.setChecked(false);
                 projektCheckbox.setChecked(false);
+            } else {
+                mOnItemClickListener.onItemClicked("x");
             }
         });
 
         projektCheckbox.setOnClickListener(v -> {
-            if(projektCheckbox.isChecked())
-            {
-                mOnItemClickListener.onItemClicked("projekt checked");
+            if (projektCheckbox.isChecked()) {
+                mOnItemClickListener.onItemClicked("projekt");
                 doneCheckbox.setChecked(false);
                 todoCheckbox.setChecked(true);
+            } else if (todoCheckbox.isChecked()) {
+                mOnItemClickListener.onItemClicked("todo");
+            } else {
+                mOnItemClickListener.onItemClicked("x");
             }
 
         });
-
     }
 
     @Override
