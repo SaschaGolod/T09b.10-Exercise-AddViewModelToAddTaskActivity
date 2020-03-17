@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.example.android.todolist.R;
 import com.h6ah4i.android.widget.advrecyclerview.utils.RecyclerViewAdapterUtils;
@@ -26,22 +25,17 @@ public class DemoHeaderFooterAdapter
     CheckBox projektCheckbox;
     ImageView filterImage;
 
-    boolean todoBool = false;
-    boolean doneBool = false;
-    boolean projektBool = false;
-
-    static class HeaderViewHolder extends RecyclerView.ViewHolder {
-        //Todo ändern!
-
-
+    class HeaderViewHolder extends RecyclerView.ViewHolder {
         public HeaderViewHolder(View itemView) {
             super(itemView);
+
+            todoCheckbox = itemView.findViewById(R.id.todoCheckboxID);
+            doneCheckbox = itemView.findViewById(R.id.doneCheckboxID);
+            projektCheckbox = itemView.findViewById(R.id.projektCheckboxID);
         }
     }
 
     static class FooterViewHolder extends RecyclerView.ViewHolder {
-
-
         public FooterViewHolder(View itemView) {
             super(itemView);
 
@@ -71,11 +65,6 @@ public class DemoHeaderFooterAdapter
     @Override
     public HeaderViewHolder onCreateHeaderItemViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.header_item, parent, false);
-        todoCheckbox = v.findViewById(R.id.todoCheckboxID);
-        doneCheckbox = v.findViewById(R.id.doneCheckboxID);
-        projektCheckbox = v.findViewById(R.id.projektCheckboxID);
-        filterImage = v.findViewById(R.id.filterImageID);
-
         HeaderViewHolder vh = new HeaderViewHolder(v);
         if (mOnItemClickListener != null) {
             vh.itemView.setOnClickListener(this);
@@ -125,7 +114,7 @@ public class DemoHeaderFooterAdapter
         }
 
         //Todo On Item Clicked implementieren
-       // mOnItemClickListener.startActivitySettings();
+        mOnItemClickListener.onItemClicked(message);
     }
 
     // --------------------------------------------
@@ -143,33 +132,12 @@ public class DemoHeaderFooterAdapter
     public void onBindHeaderItemViewHolder(@NonNull HeaderViewHolder holder, int localPosition) {
         applyFullSpanForStaggeredGridLayoutManager(holder);
 
-        //Checkboxes haben mit irgendwas ein konflikt todo behenen!!!
-        projektCheckbox.setChecked(false);
-        todoCheckbox.setChecked(false);
-        doneCheckbox.setChecked(false);
+        todoCheckbox.setOnClickListener(v -> mOnItemClickListener.onItemClicked("todo"));
 
-        doneCheckbox.setOnClickListener(v -> {
-            if(!doneBool)
-            {
-                doneCheckbox.setChecked(true);
-                doneBool = true;
-            }else{
-                doneCheckbox.setChecked(false);
-                doneBool = false;
-            }
-        });
+        doneCheckbox.setOnClickListener(v -> mOnItemClickListener.onItemClicked("done"));
 
-        projektCheckbox.setOnClickListener(v -> {
-            if(!projektBool)
-            {
-                projektCheckbox.setChecked(true);
-                projektBool = true;
-            }else{
-                projektCheckbox.setChecked(false);
-                projektBool = false;
-            }
+        projektCheckbox.setOnClickListener(v -> mOnItemClickListener.onItemClicked("projekt"));
 
-        });
     }
 
     @Override

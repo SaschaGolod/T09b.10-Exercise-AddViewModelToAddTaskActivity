@@ -97,6 +97,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 PerformOnItemClicked(itemId, getString(R.string.ClickprojektStatus));
             }
 
+            @Override
+            public void onItemClicked(String message) {
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+            }
+
         };
 
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
@@ -114,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mDb = AppDatabase.getInstance(getApplicationContext());
     }
 
+
     private void PerformFiltering(boolean todo, boolean done, boolean projekt) {
         if(todo)
         {
@@ -124,9 +130,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }else{
             Toast.makeText(getApplicationContext(), "Projekt", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void PerformStartFilterActivity() {
 
     }
 
