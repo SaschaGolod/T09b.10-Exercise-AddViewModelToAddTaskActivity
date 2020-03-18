@@ -46,7 +46,7 @@ import androidx.recyclerview.widget.RecyclerView;
  * Please refer to other examples for more advanced usages. Thanks!
  */
 
-public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity extends AppCompatActivity {
 
     private AppDatabase mDb;
     private List<TaskEntry> listTaskEntries;
@@ -110,9 +110,13 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                         DoneChecked = false;
                         break;
                 }
-            }
 
+
+
+            }
             //Todo Bug liste aktualiesieren fehlt
+
+
 
         };
 
@@ -232,9 +236,5 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             listTaskEntries = taskEntries;
 
         });
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
     }
 }
