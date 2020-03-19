@@ -16,6 +16,10 @@ public interface TaskDao {
     @Query("SELECT * FROM task ORDER BY priority")
     LiveData<List<TaskEntry>> loadAllTasks();
 
+    //Todo Experimental (Falls nicht klappt... neu herunterladen)
+    @Query("SELECT * FROM TASK WHERE status = :status")
+    LiveData<TaskEntry> loadTaskByStatus(String status);
+
     @Insert
     void insertTask(TaskEntry taskEntry);
 

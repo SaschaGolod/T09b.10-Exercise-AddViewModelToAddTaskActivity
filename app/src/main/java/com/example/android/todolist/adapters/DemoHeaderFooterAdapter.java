@@ -1,6 +1,9 @@
 package com.example.android.todolist.adapters;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,13 +18,24 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import static android.content.Context.MODE_PRIVATE;
+import static com.example.android.todolist.MainActivity.SHARED_PREFS;
+import static com.example.android.todolist.MainActivity._DoneChecked;
+import static com.example.android.todolist.MainActivity._ProjektChecked;
+import static com.example.android.todolist.MainActivity._TodoChecked;
+
 public class DemoHeaderFooterAdapter
         extends AbstractHeaderFooterWrapperAdapter<DemoHeaderFooterAdapter.HeaderViewHolder, DemoHeaderFooterAdapter.FooterViewHolder>
         implements View.OnClickListener {
     private OnListItemClickMessageListener mOnItemClickListener;
+
     private CheckBox todoCheckbox;
     private CheckBox doneCheckbox;
     private CheckBox projektCheckbox;
+    Context mContext;
+    private boolean TodoChecked;
+    private boolean DoneChecked;
+    private boolean ProjektChecked;
 
     class HeaderViewHolder extends RecyclerView.ViewHolder {
         HeaderViewHolder(View itemView) {
@@ -40,9 +54,10 @@ public class DemoHeaderFooterAdapter
         }
     }
 
-    public DemoHeaderFooterAdapter(RecyclerView.Adapter adapter, OnListItemClickMessageListener clickListener) {
+    public DemoHeaderFooterAdapter(RecyclerView.Adapter adapter, OnListItemClickMessageListener clickListener, Context mContext) {
         setAdapter(adapter);
         mOnItemClickListener = clickListener;
+        this.mContext = mContext;
     }
 
     @Override
@@ -124,9 +139,27 @@ public class DemoHeaderFooterAdapter
     @Override
     public void onBindHeaderItemViewHolder(@NonNull HeaderViewHolder holder, int localPosition) {
         applyFullSpanForStaggeredGridLayoutManager(holder);
-
+        SetCheckBoxesState();
         SetOnClickListener();
 
+    }
+
+    private void SetCheckBoxesState() {
+        //Reload State of SharedPreferences
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        DoneChecked = sharedPreferences.getBoolean(_DoneChecked, false);
+        ProjektChecked = sharedPreferences.getBoolean(_ProjektChecked, false);
+        TodoChecked = sharedPreferences.getBoolean(_TodoChecked, false);
+
+        if (TodoChecked) {
+            todoCheckbox.setChecked(true);
+        }
+        if (DoneChecked) {
+            doneCheckbox.setChecked(true);
+        }
+        if (ProjektChecked) {
+            projektCheckbox.setChecked(true);
+        }
     }
 
     private void SetOnClickListener() {
@@ -163,6 +196,8 @@ public class DemoHeaderFooterAdapter
             }
 
         });
+
+
     }
 
     @Override
