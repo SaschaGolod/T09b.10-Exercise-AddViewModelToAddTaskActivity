@@ -16,9 +16,11 @@
 
 package com.example.android.todolist;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.example.android.todolist.adapters.DemoHeaderFooterAdapter;
 import com.example.android.todolist.adapters.OnListItemClickMessageListener;
@@ -50,9 +52,15 @@ public class MainActivity extends AppCompatActivity {
 
     private AppDatabase mDb;
     private List<TaskEntry> listTaskEntries;
-    private boolean TodoChecked = false;
-    private boolean DoneChecked = false;
-    private boolean ProjektChecked = false;
+
+    public static final String SHARED_PREFS = "shared_preferences";
+    public static final String _TodoChecked = "TodoChecked";
+    public static final String _DoneChecked = "DoneChecked";
+    public static final String _ProjektChecked = "ProjektChecked";
+
+    public boolean TodoChecked;
+    public boolean DoneChecked;
+    public boolean ProjektChecked;
 
 
     @Override
@@ -94,40 +102,35 @@ public class MainActivity extends AppCompatActivity {
                         TodoChecked = true;
                         DoneChecked = false;
                         ProjektChecked = false;
+                        saveStateOfButtons();
                         break;
                     case "done":
+                        TodoChecked = false;
                         DoneChecked = true;
-
+                        ProjektChecked = false;
+                        saveStateOfButtons();
                         break;
                     case "projekt":
                         ProjektChecked = true;
                         TodoChecked = true;
                         DoneChecked = false;
+                        saveStateOfButtons();
+                        loadStateOfButtons();
                         break;
                     default:
                         ProjektChecked = false;
                         TodoChecked = false;
                         DoneChecked = false;
+                        saveStateOfButtons();
                         break;
                 }
-
-
-
             }
-            //Todo Bug liste aktualiesieren fehlt
-
-
-
         };
-
 
         RecyclerView.Adapter adapter = new SimpleDemoItemAdapter(clickListener);
         setUpViewModel(adapter);
-        adapter = new DemoHeaderFooterAdapter(adapter, clickListener);
-
-        //Todo Todo Bug liste aktualiesieren fehlt
-        //adapter = new MyItemFilteringAdapter(adapter);
-
+        Context mContext = getApplicationContext();
+        adapter = new DemoHeaderFooterAdapter(adapter, clickListener, mContext);
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -136,6 +139,24 @@ public class MainActivity extends AppCompatActivity {
 
         setFabButton();
         mDb = AppDatabase.getInstance(getApplicationContext());
+    }
+
+    private void saveStateOfButtons() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(_DoneChecked, DoneChecked);
+        editor.putBoolean(_ProjektChecked, ProjektChecked);
+        editor.putBoolean(_TodoChecked, TodoChecked);
+        Log.e("Save Booleans ", "TodoChecked: " + Boolean.toString(TodoChecked) + " DoneChecked: " + Boolean.toString(DoneChecked) + " ProjektChecked: " + Boolean.toString(ProjektChecked));
+        editor.apply();
+    }
+
+    private void loadStateOfButtons() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        DoneChecked = sharedPreferences.getBoolean(_DoneChecked, false);
+        ProjektChecked = sharedPreferences.getBoolean(_ProjektChecked, false);
+        TodoChecked = sharedPreferences.getBoolean(_TodoChecked, false);
+        Log.e("Load Booleans ", "TodoChecked: " + Boolean.toString(TodoChecked) + " DoneChecked: " + Boolean.toString(DoneChecked) + " ProjektChecked: " + Boolean.toString(ProjektChecked));
     }
 
     private void enableSwipeToDelete(RecyclerView recyclerView) {
@@ -201,6 +222,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpViewModel(RecyclerView.Adapter adapter) {
+        loadStateOfButtons();
         MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         viewModel.getTasks().observe(this, (List<TaskEntry> taskEntries) -> {
 
