@@ -21,8 +21,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.example.android.todolist.adapters.DemoHeaderFooterAdapter;
+import com.example.android.todolist.adapters.MyItemFilteringAdapter;
 import com.example.android.todolist.adapters.OnListItemClickMessageListener;
 import com.example.android.todolist.adapters.SimpleDemoItemAdapter;
 import com.example.android.todolist.adapters.SwipeToDeleteCallback;
@@ -50,9 +56,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class MainActivity extends AppCompatActivity {
 
+    private SimpleDemoItemAdapter mFilteringAdapter;
+
     private AppDatabase mDb;
     private List<TaskEntry> listTaskEntries;
 
+    //Shared Prefs werden nur beim Starten der App verwendet.
     public static final String SHARED_PREFS = "shared_preferences";
     public static final String _TodoChecked = "TodoChecked";
     public static final String _DoneChecked = "DoneChecked";
@@ -102,43 +111,51 @@ public class MainActivity extends AppCompatActivity {
                         TodoChecked = true;
                         DoneChecked = false;
                         ProjektChecked = false;
-                        saveStateOfButtons();
                         break;
                     case "done":
                         TodoChecked = false;
                         DoneChecked = true;
                         ProjektChecked = false;
-                        saveStateOfButtons();
                         break;
                     case "projekt":
                         ProjektChecked = true;
                         TodoChecked = true;
                         DoneChecked = false;
-                        saveStateOfButtons();
-                        loadStateOfButtons();
                         break;
                     default:
                         ProjektChecked = false;
                         TodoChecked = false;
                         DoneChecked = false;
-                        saveStateOfButtons();
                         break;
                 }
+                saveStateOfButtons();
+                mFilteringAdapter.notifyTaskEntrysChanged(message);
+                //makeAMassage(message);
             }
         };
+        RecyclerView.Adapter adapter;
 
-        RecyclerView.Adapter adapter = new SimpleDemoItemAdapter(clickListener);
+        adapter = mFilteringAdapter = new SimpleDemoItemAdapter(clickListener);
         setUpViewModel(adapter);
         Context mContext = getApplicationContext();
         adapter = new DemoHeaderFooterAdapter(adapter, clickListener, mContext);
 
+        //adapter = mFilteringAdapter = new MyItemFilteringAdapter(adapter);
+
         recyclerView.setAdapter(adapter);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         enableSwipeToDelete(recyclerView);
 
         setFabButton();
         mDb = AppDatabase.getInstance(getApplicationContext());
+    }
+
+    private void makeAMassage(String message) {
+       // ((SimpleDemoItemAdapter) adapter).setTasks();
+        //Todo hier fail
+        Toast.makeText(getApplicationContext(), "juhuuu", Toast.LENGTH_LONG).show();
     }
 
     private void saveStateOfButtons() {
@@ -255,6 +272,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             ((SimpleDemoItemAdapter) adapter).setTasks(taskEntries);
+            //((SimpleDemoItemAdapter) adapter).notifyTaskEntrysChanged("a");
             listTaskEntries = taskEntries;
 
         });

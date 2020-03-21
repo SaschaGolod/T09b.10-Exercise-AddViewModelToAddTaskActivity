@@ -1,6 +1,7 @@
 package com.example.android.todolist.adapters;
 
 import android.view.ViewGroup;
+import android.widget.Filterable;
 
 import com.h6ah4i.android.widget.advrecyclerview.adapter.AdapterPathSegment;
 import com.h6ah4i.android.widget.advrecyclerview.adapter.ItemIdComposer;
@@ -18,7 +19,10 @@ import androidx.recyclerview.widget.RecyclerView;
 /**
  * A simplified version of ComposedAdapter for creating headers and footers.
  */
-public abstract class AbstractHeaderFooterWrapperAdapter<HeaderVH extends RecyclerView.ViewHolder, FooterVH extends RecyclerView.ViewHolder> extends ComposedAdapter {
+public abstract class AbstractHeaderFooterWrapperAdapter<HeaderVH
+        extends RecyclerView.ViewHolder, FooterVH
+        extends RecyclerView.ViewHolder>
+        extends ComposedAdapter {
     /**
      * Segment type: header items
      */

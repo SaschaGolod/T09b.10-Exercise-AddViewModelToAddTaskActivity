@@ -3,11 +3,12 @@ package com.example.android.todolist.adapters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.Filter;
+import android.widget.Filterable;
 
 import com.example.android.todolist.R;
 import com.h6ah4i.android.widget.advrecyclerview.utils.RecyclerViewAdapterUtils;
@@ -27,15 +28,15 @@ import static com.example.android.todolist.MainActivity._TodoChecked;
 public class DemoHeaderFooterAdapter
         extends AbstractHeaderFooterWrapperAdapter<DemoHeaderFooterAdapter.HeaderViewHolder, DemoHeaderFooterAdapter.FooterViewHolder>
         implements View.OnClickListener {
-    private OnListItemClickMessageListener mOnItemClickListener;
+    private boolean doneChecked;
+    private boolean projektChecked;
+    private boolean todoChecked;
 
+    private OnListItemClickMessageListener mOnItemClickListener;
     private CheckBox todoCheckbox;
     private CheckBox doneCheckbox;
     private CheckBox projektCheckbox;
-    Context mContext;
-    private boolean TodoChecked;
-    private boolean DoneChecked;
-    private boolean ProjektChecked;
+    private Context mContext;
 
     class HeaderViewHolder extends RecyclerView.ViewHolder {
         HeaderViewHolder(View itemView) {
@@ -58,6 +59,13 @@ public class DemoHeaderFooterAdapter
         setAdapter(adapter);
         mOnItemClickListener = clickListener;
         this.mContext = mContext;
+
+        //Reload State of SharedPreferences
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        doneChecked = sharedPreferences.getBoolean(_DoneChecked, false);
+        projektChecked = sharedPreferences.getBoolean(_ProjektChecked, false);
+        todoChecked = sharedPreferences.getBoolean(_TodoChecked, false);
+        SetCheckBoxesState();
     }
 
     @Override
@@ -139,25 +147,18 @@ public class DemoHeaderFooterAdapter
     @Override
     public void onBindHeaderItemViewHolder(@NonNull HeaderViewHolder holder, int localPosition) {
         applyFullSpanForStaggeredGridLayoutManager(holder);
-        SetCheckBoxesState();
         SetOnClickListener();
-
     }
 
-    private void SetCheckBoxesState() {
-        //Reload State of SharedPreferences
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        DoneChecked = sharedPreferences.getBoolean(_DoneChecked, false);
-        ProjektChecked = sharedPreferences.getBoolean(_ProjektChecked, false);
-        TodoChecked = sharedPreferences.getBoolean(_TodoChecked, false);
 
-        if (TodoChecked) {
+    private void SetCheckBoxesState() {
+        if (todoChecked) {
             todoCheckbox.setChecked(true);
         }
-        if (DoneChecked) {
+        if (doneChecked) {
             doneCheckbox.setChecked(true);
         }
-        if (ProjektChecked) {
+        if (projektChecked) {
             projektCheckbox.setChecked(true);
         }
     }

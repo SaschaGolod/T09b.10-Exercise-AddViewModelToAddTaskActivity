@@ -6,11 +6,10 @@ import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.todolist.R;
 import com.example.android.todolist.database.TaskEntry;
@@ -18,14 +17,18 @@ import com.h6ah4i.android.widget.advrecyclerview.utils.RecyclerViewAdapterUtils;
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
-public class SimpleDemoItemAdapter  extends RecyclerView.Adapter<SimpleDemoItemAdapter.MyViewHolder> implements View.OnClickListener {
-    List<TaskEntry> filteredData;
+
+public class SimpleDemoItemAdapter extends RecyclerView.Adapter<SimpleDemoItemAdapter.MyViewHolder> implements View.OnClickListener {
+    private List<TaskEntry> filteredTaskEntries;
+    private List<TaskEntry> fullTaskEntryList;
+
 
     // Constant for date format
     private static final String DATE_FORMAT = "dd/MM/yyy";
@@ -33,6 +36,14 @@ public class SimpleDemoItemAdapter  extends RecyclerView.Adapter<SimpleDemoItemA
     // Date formatter
     private SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
     private Context mContext;
+    public static final String SHARED_PREFS = "shared_preferences";
+    public static final String _TodoChecked = "TodoChecked";
+    public static final String _DoneChecked = "DoneChecked";
+    public static final String _ProjektChecked = "ProjektChecked";
+
+    private boolean TodoChecked;
+    private boolean DoneChecked;
+    private boolean ProjektChecked;
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
         FrameLayout containerView;
@@ -64,7 +75,6 @@ public class SimpleDemoItemAdapter  extends RecyclerView.Adapter<SimpleDemoItemA
             updatedAtView = itemView.findViewById(R.id.taskUpdatedAt);
             priorityView = itemView.findViewById(R.id.priorityTextView);
             wallTowall = itemView.findViewById(R.id.taskWallToWall);
-
         }
     }
 
@@ -77,7 +87,7 @@ public class SimpleDemoItemAdapter  extends RecyclerView.Adapter<SimpleDemoItemA
 
     @Override
     public long getItemId(int position) {
-        return filteredData.get(position).getId();
+        return filteredTaskEntries.get(position).getId();
     }
 
     @NonNull
@@ -94,7 +104,8 @@ public class SimpleDemoItemAdapter  extends RecyclerView.Adapter<SimpleDemoItemA
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         //holder.textView.setText("Item " + position);
         // Determine the values of the wanted data
-        TaskEntry taskEntry = filteredData.get(position);
+
+        TaskEntry taskEntry = filteredTaskEntries.get(position);
         String description = taskEntry.getName();
         int priority = taskEntry.getPriority();
         String startWall = taskEntry.getStartWall();
@@ -130,17 +141,17 @@ public class SimpleDemoItemAdapter  extends RecyclerView.Adapter<SimpleDemoItemA
         }
 
         holder.btn_flash.setOnClickListener(v -> {
-            int elementId = filteredData.get(position).getId();
+            int elementId = fullTaskEntryList.get(position).getId();
             mOnItemClickListener.OnFlashClicked(elementId);
         });
 
         holder.btn_top.setOnClickListener(v -> {
-            int elementId = filteredData.get(position).getId();
+            int elementId = fullTaskEntryList.get(position).getId();
             mOnItemClickListener.OnTopClicked(elementId);
         });
 
         holder.btn_projekt.setOnClickListener(v -> {
-            int elementId = filteredData.get(position).getId();
+            int elementId = fullTaskEntryList.get(position).getId();
             mOnItemClickListener.OnProjektClicked(elementId);
         });
 
@@ -191,14 +202,17 @@ public class SimpleDemoItemAdapter  extends RecyclerView.Adapter<SimpleDemoItemA
      */
     @Override
     public int getItemCount() {
-        if (filteredData == null) {
+        if (filteredTaskEntries == null) {
             return 0;
         }
-        return filteredData.size();
+        return filteredTaskEntries.size();
     }
 
+    /**
+    * Gibt die Daten zurück.
+    */
     public List<TaskEntry> getTasks() {
-        return filteredData;
+        return filteredTaskEntries;
     }
 
     /**
@@ -206,7 +220,61 @@ public class SimpleDemoItemAdapter  extends RecyclerView.Adapter<SimpleDemoItemA
      * and notifies the adapter to use the new values on it
      */
     public void setTasks(List<TaskEntry> taskEntries) {
-        filteredData = taskEntries;
+        fullTaskEntryList = taskEntries;
+        this.filteredTaskEntries = new ArrayList<>(taskEntries);
+        notifyDataSetChanged();
+    }
+
+    public void setTasks(){
+        Toast.makeText(mContext, "juhuuu", Toast.LENGTH_LONG).show();
+        notifyDataSetChanged();
+    }
+
+    public void notifyTaskEntrysChanged(String message){
+        switch (message) {
+            case "todo":
+                TodoChecked = true;
+                DoneChecked = false;
+                ProjektChecked = false;
+                break;
+            case "done":
+                TodoChecked = false;
+                DoneChecked = true;
+                ProjektChecked = false;
+                break;
+            case "projekt":
+                ProjektChecked = true;
+                TodoChecked = true;
+                DoneChecked = false;
+                break;
+            default:
+                ProjektChecked = false;
+                TodoChecked = false;
+                DoneChecked = false;
+                break;
+        }
+        filteredTaskEntries.clear();
+        if (DoneChecked) {
+            for (int i = 0; i < fullTaskEntryList.size(); i++) {
+                if ((fullTaskEntryList.get(i).getStatus().equals("f") || fullTaskEntryList.get(i).getStatus().equals("t"))) {
+                    filteredTaskEntries.add(fullTaskEntryList.get(i));
+                }
+            }
+        } else if (ProjektChecked) {
+            for (int i = 0; i < fullTaskEntryList.size(); i++) {
+                if (fullTaskEntryList.get(i).getStatus().equals("p")) {
+                    filteredTaskEntries.add(fullTaskEntryList.get(i));
+                }
+            }
+        } else if (TodoChecked) {
+            for (int i = 0; i < fullTaskEntryList.size(); i++) {
+                if (!(fullTaskEntryList.get(i).getStatus().equals("f") || fullTaskEntryList.get(i).getStatus().equals("t"))) {
+                    filteredTaskEntries.add(fullTaskEntryList.get(i));
+                }
+            }
+        }else{
+            filteredTaskEntries.addAll(fullTaskEntryList);
+        }
         notifyDataSetChanged();
     }
 
@@ -225,7 +293,7 @@ public class SimpleDemoItemAdapter  extends RecyclerView.Adapter<SimpleDemoItemA
         int localPosition = WrapperAdapterUtils.unwrapPosition(rootAdapter, this, rootPosition);
 
         if (mOnItemClickListener != null) {
-            int elementId = filteredData.get(localPosition).getId();
+            int elementId = fullTaskEntryList.get(localPosition).getId();
             mOnItemClickListener.onItemClickListener(elementId);
         }
     }
