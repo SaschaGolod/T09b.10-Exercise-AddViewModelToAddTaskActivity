@@ -9,5 +9,5 @@ public interface OnListItemClickMessageListener {
 
     void OnProjektClicked(int itemId);
 
-    void startActivitySettings();
+    void onItemClicked(String message);
 }

@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/LinearFilterView"
     android:orientation="horizontal"
     android:background="@color/colorPrimary">
 
@@ -29,8 +28,7 @@
         android:textColor="@color/materialWhite"
         android:buttonTint="@color/materialWhite"
         android:textSize="18sp"
-        android:textStyle="bold"
-        tools:targetApi="lollipop"/>
+        android:textStyle="bold" />
 
     <CheckBox
         android:id="@+id/projektCheckboxID"
@@ -41,8 +39,7 @@
         android:textColor="@color/materialWhite"
         android:buttonTint="@color/materialWhite"
         android:textSize="18sp"
-        android:textStyle="bold"
-        tools:targetApi="lollipop"/>
+        android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/filterImageID"

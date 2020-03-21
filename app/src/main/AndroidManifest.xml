@@ -10,7 +10,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".HeaderFooterActivity"></activity>
         <!-- The manifest entry for the MainActivity -->
         <activity
             android:name=".MainActivity"
@@ -24,10 +23,6 @@
         <activity
             android:name=".AddTaskActivity"
             android:label="@string/add_task_activity_name" />
-        <activity
-            android:name=".SettingsActivity"
-            android:label="Settings"
-            android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>
