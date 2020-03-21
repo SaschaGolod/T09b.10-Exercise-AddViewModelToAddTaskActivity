@@ -3,6 +3,7 @@ package com.example.android.todolist.adapters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,8 +31,9 @@ import static com.example.android.todolist.MainActivity.onItemClickedTodo;
 public class DemoHeaderFooterAdapter
         extends AbstractHeaderFooterWrapperAdapter<DemoHeaderFooterAdapter.HeaderViewHolder, DemoHeaderFooterAdapter.FooterViewHolder>
         implements View.OnClickListener {
+    private static final String TAG = "DemoHeaderFooterAdapter";
     private boolean doneChecked;
-    private boolean projektChecked;
+    private boolean projectChecked;
     private boolean todoChecked;
 
     private OnListItemClickMessageListener mOnItemClickListener;
@@ -40,10 +42,11 @@ public class DemoHeaderFooterAdapter
     private CheckBox projektCheckbox;
     private Context mContext;
 
+    //Vielleicht diese Klasse wieder static machen?
     class HeaderViewHolder extends RecyclerView.ViewHolder {
         HeaderViewHolder(View itemView) {
             super(itemView);
-
+            Log.i(TAG, "onCreate");
             todoCheckbox = itemView.findViewById(R.id.todoCheckboxID);
             doneCheckbox = itemView.findViewById(R.id.doneCheckboxID);
             projektCheckbox = itemView.findViewById(R.id.projektCheckboxID);
@@ -58,16 +61,22 @@ public class DemoHeaderFooterAdapter
     }
 
     public DemoHeaderFooterAdapter(RecyclerView.Adapter adapter, OnListItemClickMessageListener clickListener, Context mContext) {
+        Log.i(TAG, "DemoHeaderFooterAdapter");
         setAdapter(adapter);
         mOnItemClickListener = clickListener;
         this.mContext = mContext;
+        GetBooleansStatefromSharedPrefs(mContext);
+        //macht fehler
+        //SetCheckBoxesState();
+    }
 
+    private void GetBooleansStatefromSharedPrefs(Context mContext) {
+        Log.i(TAG, "GetBooleansStatefromSharedPrefs");
         //Reload State of SharedPreferences
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         doneChecked = sharedPreferences.getBoolean(_DoneChecked, false);
-        projektChecked = sharedPreferences.getBoolean(_ProjectChecked, false);
+        projectChecked = sharedPreferences.getBoolean(_ProjectChecked, false);
         todoChecked = sharedPreferences.getBoolean(_TodoChecked, false);
-        SetCheckBoxesState();
     }
 
     @Override
@@ -83,6 +92,7 @@ public class DemoHeaderFooterAdapter
     @NonNull
     @Override
     public HeaderViewHolder onCreateHeaderItemViewHolder(@NonNull ViewGroup parent, int viewType) {
+        Log.i(TAG, "HeaderViewHolder");
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.header_item, parent, false);
         HeaderViewHolder vh = new HeaderViewHolder(v);
         if (mOnItemClickListener != null) {
@@ -149,55 +159,68 @@ public class DemoHeaderFooterAdapter
     @Override
     public void onBindHeaderItemViewHolder(@NonNull HeaderViewHolder holder, int localPosition) {
         applyFullSpanForStaggeredGridLayoutManager(holder);
+        Log.i(TAG, "onBindHeaderItemViewHolder");
         SetOnClickListener();
+        SetCheckBoxesState();
     }
 
 
     private void SetCheckBoxesState() {
-        if (todoChecked) {
-            todoCheckbox.setChecked(true);
-        }
-        if (doneChecked) {
-            doneCheckbox.setChecked(true);
-        }
-        if (projektChecked) {
-            projektCheckbox.setChecked(true);
-        }
+        Log.i(TAG, "SetCheckBoxesState");
+        todoCheckbox.setChecked(todoChecked);
+        doneCheckbox.setChecked(doneChecked);
+        projektCheckbox.setChecked(projectChecked);
     }
 
     private void SetOnClickListener() {
+        Log.i(TAG, "SetOnClickListener");
         todoCheckbox.setOnClickListener(v -> {
-            if (todoCheckbox.isChecked()) {
-                mOnItemClickListener.onItemClicked(onItemClickedTodo);
-                doneCheckbox.setChecked(false);
-            } else {
+            if (todoChecked) {
+                todoChecked = false;
+                projectChecked = false;
+                //nicht nötig
+                doneChecked = false;
                 mOnItemClickListener.onItemClicked(onItemClickedDefault);
-                projektCheckbox.setChecked(false);
+            } else {
+                todoChecked = true;
+                doneChecked = false;
+                //nicht nötig
+                projectChecked = false;
+                mOnItemClickListener.onItemClicked(onItemClickedTodo);
             }
-
+            SetCheckBoxesState();
         });
 
         doneCheckbox.setOnClickListener(v -> {
-            if (doneCheckbox.isChecked()) {
-                mOnItemClickListener.onItemClicked(onItemClickedDone);
-                todoCheckbox.setChecked(false);
-                projektCheckbox.setChecked(false);
-            } else {
+            if (doneChecked) {
+                doneChecked = false;
+                //nicht relevant aber lass die 2 zeilen drin
+                todoChecked = false;
+                projectChecked = false;
                 mOnItemClickListener.onItemClicked(onItemClickedDefault);
+            } else {
+                doneChecked = true;
+                todoChecked = false;
+                projectChecked = false;
+                mOnItemClickListener.onItemClicked(onItemClickedDone);
             }
+            SetCheckBoxesState();
         });
 
         projektCheckbox.setOnClickListener(v -> {
-            if (projektCheckbox.isChecked()) {
-                mOnItemClickListener.onItemClicked(onItemClickedProject);
-                doneCheckbox.setChecked(false);
-                todoCheckbox.setChecked(true);
-            } else if (todoCheckbox.isChecked()) {
+            if (projectChecked) {
+                doneChecked = false;
+                projectChecked = false;
+                //nicht relevant aber schreibe ich hin:
+                todoChecked = true;
                 mOnItemClickListener.onItemClicked(onItemClickedTodo);
             } else {
-                mOnItemClickListener.onItemClicked(onItemClickedDefault);
+                todoChecked = true;
+                doneChecked = false;
+                projectChecked = true;
+                mOnItemClickListener.onItemClicked(onItemClickedProject);
             }
-
+            SetCheckBoxesState();
         });
 
 
