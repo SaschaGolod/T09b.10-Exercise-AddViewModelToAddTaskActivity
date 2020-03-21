@@ -24,6 +24,10 @@ import static com.example.android.todolist.MainActivity.SHARED_PREFS;
 import static com.example.android.todolist.MainActivity._DoneChecked;
 import static com.example.android.todolist.MainActivity._ProjektChecked;
 import static com.example.android.todolist.MainActivity._TodoChecked;
+import static com.example.android.todolist.MainActivity.onItemClickedDefault;
+import static com.example.android.todolist.MainActivity.onItemClickedDone;
+import static com.example.android.todolist.MainActivity.onItemClickedProjekt;
+import static com.example.android.todolist.MainActivity.onItemClickedTodo;
 
 public class DemoHeaderFooterAdapter
         extends AbstractHeaderFooterWrapperAdapter<DemoHeaderFooterAdapter.HeaderViewHolder, DemoHeaderFooterAdapter.FooterViewHolder>
@@ -166,10 +170,10 @@ public class DemoHeaderFooterAdapter
     private void SetOnClickListener() {
         todoCheckbox.setOnClickListener(v -> {
             if (todoCheckbox.isChecked()) {
-                mOnItemClickListener.onItemClicked("todo");
+                mOnItemClickListener.onItemClicked(onItemClickedTodo);
                 doneCheckbox.setChecked(false);
             } else {
-                mOnItemClickListener.onItemClicked("x");
+                mOnItemClickListener.onItemClicked(onItemClickedDefault);
                 projektCheckbox.setChecked(false);
             }
 
@@ -177,23 +181,23 @@ public class DemoHeaderFooterAdapter
 
         doneCheckbox.setOnClickListener(v -> {
             if (doneCheckbox.isChecked()) {
-                mOnItemClickListener.onItemClicked("done");
+                mOnItemClickListener.onItemClicked(onItemClickedDone);
                 todoCheckbox.setChecked(false);
                 projektCheckbox.setChecked(false);
             } else {
-                mOnItemClickListener.onItemClicked("x");
+                mOnItemClickListener.onItemClicked(onItemClickedDefault);
             }
         });
 
         projektCheckbox.setOnClickListener(v -> {
             if (projektCheckbox.isChecked()) {
-                mOnItemClickListener.onItemClicked("projekt");
+                mOnItemClickListener.onItemClicked(onItemClickedProjekt);
                 doneCheckbox.setChecked(false);
                 todoCheckbox.setChecked(true);
             } else if (todoCheckbox.isChecked()) {
-                mOnItemClickListener.onItemClicked("todo");
+                mOnItemClickListener.onItemClicked(onItemClickedTodo);
             } else {
-                mOnItemClickListener.onItemClicked("x");
+                mOnItemClickListener.onItemClicked(onItemClickedDefault);
             }
 
         });

@@ -67,6 +67,11 @@ public class MainActivity extends AppCompatActivity {
     public static final String _DoneChecked = "DoneChecked";
     public static final String _ProjektChecked = "ProjektChecked";
 
+    public static final String onItemClickedTodo = "todo";
+    public static final String onItemClickedDone = "done";
+    public static final String onItemClickedProjekt = "projekt";
+    public static final String onItemClickedDefault = "x";
+
     public boolean TodoChecked;
     public boolean DoneChecked;
     public boolean ProjektChecked;
@@ -107,17 +112,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClicked(String message) {
                 switch (message) {
-                    case "todo":
+                    case onItemClickedTodo:
                         TodoChecked = true;
                         DoneChecked = false;
                         ProjektChecked = false;
                         break;
-                    case "done":
+                    case onItemClickedDone:
                         TodoChecked = false;
                         DoneChecked = true;
                         ProjektChecked = false;
                         break;
-                    case "projekt":
+                    case onItemClickedProjekt:
                         ProjektChecked = true;
                         TodoChecked = true;
                         DoneChecked = false;
