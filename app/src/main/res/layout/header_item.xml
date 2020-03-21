@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/LinearFilterView"
     android:orientation="horizontal"
     android:background="@color/colorPrimary">
-    <!--- Todo 1.) löchen der anderen Datei "task_layout top! -->
 
     <CheckBox
         android:id="@+id/todoCheckboxID"

@@ -1,10 +1,14 @@
 package com.example.android.todolist.adapters;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.Filter;
+import android.widget.Filterable;
 
 import com.example.android.todolist.R;
 import com.h6ah4i.android.widget.advrecyclerview.utils.RecyclerViewAdapterUtils;
@@ -15,13 +19,24 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import static android.content.Context.MODE_PRIVATE;
+import static com.example.android.todolist.MainActivity.SHARED_PREFS;
+import static com.example.android.todolist.MainActivity._DoneChecked;
+import static com.example.android.todolist.MainActivity._ProjektChecked;
+import static com.example.android.todolist.MainActivity._TodoChecked;
+
 public class DemoHeaderFooterAdapter
         extends AbstractHeaderFooterWrapperAdapter<DemoHeaderFooterAdapter.HeaderViewHolder, DemoHeaderFooterAdapter.FooterViewHolder>
         implements View.OnClickListener {
+    private boolean doneChecked;
+    private boolean projektChecked;
+    private boolean todoChecked;
+
     private OnListItemClickMessageListener mOnItemClickListener;
     private CheckBox todoCheckbox;
     private CheckBox doneCheckbox;
     private CheckBox projektCheckbox;
+    private Context mContext;
 
     class HeaderViewHolder extends RecyclerView.ViewHolder {
         HeaderViewHolder(View itemView) {
@@ -40,13 +55,17 @@ public class DemoHeaderFooterAdapter
         }
     }
 
-    public DemoHeaderFooterAdapter(RecyclerView.Adapter adapter) {
-        this(adapter, null);
-    }
-
-    public DemoHeaderFooterAdapter(RecyclerView.Adapter adapter, OnListItemClickMessageListener clickListener) {
+    public DemoHeaderFooterAdapter(RecyclerView.Adapter adapter, OnListItemClickMessageListener clickListener, Context mContext) {
         setAdapter(adapter);
         mOnItemClickListener = clickListener;
+        this.mContext = mContext;
+
+        //Reload State of SharedPreferences
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        doneChecked = sharedPreferences.getBoolean(_DoneChecked, false);
+        projektChecked = sharedPreferences.getBoolean(_ProjektChecked, false);
+        todoChecked = sharedPreferences.getBoolean(_TodoChecked, false);
+        SetCheckBoxesState();
     }
 
     @Override
@@ -111,7 +130,6 @@ public class DemoHeaderFooterAdapter
             throw new IllegalStateException("Something wrong.");
         }
 
-        //Todo On Item Clicked implementieren
         mOnItemClickListener.onItemClicked(message);
     }
 
@@ -129,31 +147,57 @@ public class DemoHeaderFooterAdapter
     @Override
     public void onBindHeaderItemViewHolder(@NonNull HeaderViewHolder holder, int localPosition) {
         applyFullSpanForStaggeredGridLayoutManager(holder);
+        SetOnClickListener();
+    }
 
+
+    private void SetCheckBoxesState() {
+        if (todoChecked) {
+            todoCheckbox.setChecked(true);
+        }
+        if (doneChecked) {
+            doneCheckbox.setChecked(true);
+        }
+        if (projektChecked) {
+            projektCheckbox.setChecked(true);
+        }
+    }
+
+    private void SetOnClickListener() {
         todoCheckbox.setOnClickListener(v -> {
-            if(todoCheckbox.isChecked())
-            mOnItemClickListener.onItemClicked("todo checked");
-            doneCheckbox.setChecked(false);
+            if (todoCheckbox.isChecked()) {
+                mOnItemClickListener.onItemClicked("todo");
+                doneCheckbox.setChecked(false);
+            } else {
+                mOnItemClickListener.onItemClicked("x");
+                projektCheckbox.setChecked(false);
+            }
+
         });
 
         doneCheckbox.setOnClickListener(v -> {
-            if(doneCheckbox.isChecked())
-            {
-                mOnItemClickListener.onItemClicked("done checked");
+            if (doneCheckbox.isChecked()) {
+                mOnItemClickListener.onItemClicked("done");
                 todoCheckbox.setChecked(false);
                 projektCheckbox.setChecked(false);
+            } else {
+                mOnItemClickListener.onItemClicked("x");
             }
         });
 
         projektCheckbox.setOnClickListener(v -> {
-            if(projektCheckbox.isChecked())
-            {
-                mOnItemClickListener.onItemClicked("projekt checked");
+            if (projektCheckbox.isChecked()) {
+                mOnItemClickListener.onItemClicked("projekt");
                 doneCheckbox.setChecked(false);
                 todoCheckbox.setChecked(true);
+            } else if (todoCheckbox.isChecked()) {
+                mOnItemClickListener.onItemClicked("todo");
+            } else {
+                mOnItemClickListener.onItemClicked("x");
             }
 
         });
+
 
     }
 
