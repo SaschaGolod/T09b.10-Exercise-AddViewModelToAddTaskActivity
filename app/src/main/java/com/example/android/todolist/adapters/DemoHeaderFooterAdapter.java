@@ -42,14 +42,16 @@ public class DemoHeaderFooterAdapter
     private CheckBox projektCheckbox;
     private Context mContext;
 
-    //Vielleicht diese Klasse wieder static machen?
-    class HeaderViewHolder extends RecyclerView.ViewHolder {
+    //Vielleicht diese Klasse wieder static machen? hier stand mal das
+    /*
+    todoCheckbox = itemView.findViewById(R.id.todoCheckboxID);
+            doneCheckbox = itemView.findViewById(R.id.doneCheckboxID);
+            projektCheckbox = itemView.findViewById(R.id.projektCheckboxID);
+     */
+    static class HeaderViewHolder extends RecyclerView.ViewHolder {
         HeaderViewHolder(View itemView) {
             super(itemView);
             Log.i(TAG, "onCreate");
-            todoCheckbox = itemView.findViewById(R.id.todoCheckboxID);
-            doneCheckbox = itemView.findViewById(R.id.doneCheckboxID);
-            projektCheckbox = itemView.findViewById(R.id.projektCheckboxID);
         }
     }
 
@@ -160,6 +162,10 @@ public class DemoHeaderFooterAdapter
     public void onBindHeaderItemViewHolder(@NonNull HeaderViewHolder holder, int localPosition) {
         applyFullSpanForStaggeredGridLayoutManager(holder);
         Log.i(TAG, "onBindHeaderItemViewHolder");
+        todoCheckbox = holder.itemView.findViewById(R.id.todoCheckboxID);
+        doneCheckbox = holder.itemView.findViewById(R.id.doneCheckboxID);
+        projektCheckbox = holder.itemView.findViewById(R.id.projektCheckboxID);
+
         SetOnClickListener();
         SetCheckBoxesState();
     }
@@ -209,15 +215,16 @@ public class DemoHeaderFooterAdapter
 
         projektCheckbox.setOnClickListener(v -> {
             if (projectChecked) {
-                doneChecked = false;
                 projectChecked = false;
+                doneChecked = false;
+
                 //nicht relevant aber schreibe ich hin:
                 todoChecked = true;
                 mOnItemClickListener.onItemClicked(onItemClickedTodo);
             } else {
+                projectChecked = true;
                 todoChecked = true;
                 doneChecked = false;
-                projectChecked = true;
                 mOnItemClickListener.onItemClicked(onItemClickedProject);
             }
             SetCheckBoxesState();

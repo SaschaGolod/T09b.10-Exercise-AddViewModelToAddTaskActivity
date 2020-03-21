@@ -25,6 +25,10 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import static com.example.android.todolist.MainActivity.onItemClickedDone;
+import static com.example.android.todolist.MainActivity.onItemClickedProject;
+import static com.example.android.todolist.MainActivity.onItemClickedTodo;
+
 public class SimpleDemoItemAdapter extends RecyclerView.Adapter<SimpleDemoItemAdapter.MyViewHolder> implements View.OnClickListener {
     private List<TaskEntry> filteredTaskEntries;
     private List<TaskEntry> fullTaskEntryList;
@@ -232,17 +236,17 @@ public class SimpleDemoItemAdapter extends RecyclerView.Adapter<SimpleDemoItemAd
 
     public void notifyTaskEntrysChanged(String message){
         switch (message) {
-            case "todo":
+            case onItemClickedTodo:
                 TodoChecked = true;
                 DoneChecked = false;
                 ProjektChecked = false;
                 break;
-            case "done":
+            case onItemClickedDone:
                 TodoChecked = false;
                 DoneChecked = true;
                 ProjektChecked = false;
                 break;
-            case "projekt":
+            case onItemClickedProject:
                 ProjektChecked = true;
                 TodoChecked = true;
                 DoneChecked = false;
