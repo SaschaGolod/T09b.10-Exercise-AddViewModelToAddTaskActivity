@@ -7,8 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.Filter;
-import android.widget.Filterable;
 
 import com.example.android.todolist.R;
 import com.h6ah4i.android.widget.advrecyclerview.utils.RecyclerViewAdapterUtils;
@@ -22,11 +20,11 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import static android.content.Context.MODE_PRIVATE;
 import static com.example.android.todolist.MainActivity.SHARED_PREFS;
 import static com.example.android.todolist.MainActivity._DoneChecked;
-import static com.example.android.todolist.MainActivity._ProjektChecked;
+import static com.example.android.todolist.MainActivity._ProjectChecked;
 import static com.example.android.todolist.MainActivity._TodoChecked;
 import static com.example.android.todolist.MainActivity.onItemClickedDefault;
 import static com.example.android.todolist.MainActivity.onItemClickedDone;
-import static com.example.android.todolist.MainActivity.onItemClickedProjekt;
+import static com.example.android.todolist.MainActivity.onItemClickedProject;
 import static com.example.android.todolist.MainActivity.onItemClickedTodo;
 
 public class DemoHeaderFooterAdapter
@@ -67,7 +65,7 @@ public class DemoHeaderFooterAdapter
         //Reload State of SharedPreferences
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         doneChecked = sharedPreferences.getBoolean(_DoneChecked, false);
-        projektChecked = sharedPreferences.getBoolean(_ProjektChecked, false);
+        projektChecked = sharedPreferences.getBoolean(_ProjectChecked, false);
         todoChecked = sharedPreferences.getBoolean(_TodoChecked, false);
         SetCheckBoxesState();
     }
@@ -191,7 +189,7 @@ public class DemoHeaderFooterAdapter
 
         projektCheckbox.setOnClickListener(v -> {
             if (projektCheckbox.isChecked()) {
-                mOnItemClickListener.onItemClicked(onItemClickedProjekt);
+                mOnItemClickListener.onItemClicked(onItemClickedProject);
                 doneCheckbox.setChecked(false);
                 todoCheckbox.setChecked(true);
             } else if (todoCheckbox.isChecked()) {
