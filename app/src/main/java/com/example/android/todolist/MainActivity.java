@@ -50,7 +50,7 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 
 public class MainActivity extends AppCompatActivity {
-
+    private static final String TAG = "MainActivity";
     private SimpleDemoItemAdapter mFilteringAdapter;
 
     private AppDatabase mDb;
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.i(TAG, "onCreate");
         setContentView(R.layout.activity_header_footer);
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
 
@@ -130,7 +130,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 saveStateOfButtons();
                 mFilteringAdapter.notifyTaskEntrysChanged(message);
-                //makeAMassage(message);
             }
         };
         RecyclerView.Adapter adapter;
@@ -139,8 +138,6 @@ public class MainActivity extends AppCompatActivity {
         setUpViewModel(adapter);
         Context mContext = getApplicationContext();
         adapter = new DemoHeaderFooterAdapter(adapter, clickListener, mContext);
-
-        //adapter = mFilteringAdapter = new MyItemFilteringAdapter(adapter);
 
         recyclerView.setAdapter(adapter);
 
@@ -152,29 +149,23 @@ public class MainActivity extends AppCompatActivity {
         mDb = AppDatabase.getInstance(getApplicationContext());
     }
 
-    private void makeAMassage(String message) {
-       // ((SimpleDemoItemAdapter) adapter).setTasks();
-        //Todo hier fail
-        Toast.makeText(getApplicationContext(), "juhuuu", Toast.LENGTH_LONG).show();
-    }
-
     private void saveStateOfButtons() {
+        Log.i(TAG, "saveStateButtons");
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(_DoneChecked, DoneChecked);
         editor.putBoolean(_ProjectChecked, ProjectChecked);
         editor.putBoolean(_TodoChecked, TodoChecked);
-        Log.e("Save Booleans ", "TodoChecked: " + Boolean.toString(TodoChecked) + " DoneChecked: " + Boolean.toString(DoneChecked) + " ProjektChecked: " + Boolean.toString(ProjectChecked));
         editor.apply();
     }
 
     private void loadStateOfButtons() {
+        Log.i(TAG, "loadStateOfButtons");
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         DoneChecked = sharedPreferences.getBoolean(_DoneChecked, false);
         ProjectChecked = sharedPreferences.getBoolean(_ProjectChecked, false);
         TodoChecked = sharedPreferences.getBoolean(_TodoChecked, false);
-        Log.e("Load Booleans ", "TodoChecked: " + Boolean.toString(TodoChecked) + " DoneChecked: " + Boolean.toString(DoneChecked) + " ProjektChecked: " + Boolean.toString(ProjectChecked));
-    }
+        }
 
     private void enableSwipeToDelete(RecyclerView recyclerView) {
         SwipeToDeleteCallback swipeToDeleteCallback = new SwipeToDeleteCallback(this) {
@@ -272,7 +263,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
             ((SimpleDemoItemAdapter) adapter).setTasks(taskEntries);
-            //((SimpleDemoItemAdapter) adapter).notifyTaskEntrysChanged("a");
             listTaskEntries = taskEntries;
 
         });
