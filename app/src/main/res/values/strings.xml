@@ -11,8 +11,7 @@
     <!-- Strings for AddTaskActivity -->
     <!-- This etaskEntrytask has a unicode character for "..." = "&#8230;" -->
     <string name="edit_task_description">Name&#8230;</string>
-
-    <!-- Todo Kategories Hardcode im Quellcode löschen-->
+    <!--Todo 1.) Hardcode entfernen -->
     <string-array name="kategories">
         <item>Amulett</item>
         <item>Beule</item>
@@ -95,5 +94,10 @@
     <string name="pref_key_status">pref_key_status</string>
     <string name="boulderitem_status_default_value">x</string>
     <string name="settings_title1">Weiß</string>
+
+    <string name="todo">Todo</string>
+    <string name="projekt">Projekt</string>
+    <string name="done">Done</string>
+    <string name="test">testisa</string>
 
 </resources>

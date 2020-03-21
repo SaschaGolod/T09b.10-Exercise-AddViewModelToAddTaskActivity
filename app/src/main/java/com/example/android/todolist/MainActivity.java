@@ -16,62 +16,69 @@
 
 package com.example.android.todolist;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import androidx.annotation.Nullable;
+import android.util.Log;
+import android.view.MenuItem;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.example.android.todolist.adapters.DemoHeaderFooterAdapter;
+import com.example.android.todolist.adapters.MyItemFilteringAdapter;
 import com.example.android.todolist.adapters.OnListItemClickMessageListener;
 import com.example.android.todolist.adapters.SimpleDemoItemAdapter;
 import com.example.android.todolist.adapters.SwipeToDeleteCallback;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.ItemTouchHelper;
-
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
-
 import com.example.android.todolist.database.AppDatabase;
 import com.example.android.todolist.database.TaskEntry;
-import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
-
-import org.json.JSONObject;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
-import static androidx.recyclerview.widget.DividerItemDecoration.VERTICAL;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /*
  * This example shows very very minimal implementation of header and footer feature.
  * Please refer to other examples for more advanced usages. Thanks!
  */
 
-public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity extends AppCompatActivity {
+
+    private SimpleDemoItemAdapter mFilteringAdapter;
 
     private AppDatabase mDb;
     private List<TaskEntry> listTaskEntries;
+
+    //Shared Prefs werden nur beim Starten der App verwendet.
+    public static final String SHARED_PREFS = "shared_preferences";
+    public static final String _TodoChecked = "TodoChecked";
+    public static final String _DoneChecked = "DoneChecked";
+    public static final String _ProjektChecked = "ProjektChecked";
+
+    public boolean TodoChecked;
+    public boolean DoneChecked;
+    public boolean ProjektChecked;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_header_footer);
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+
 
         OnListItemClickMessageListener clickListener = new OnListItemClickMessageListener() {
             @Override
@@ -98,18 +105,45 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             }
 
             @Override
-            public void startActivitySettings() {
-                PerformStartFilterActivity();
+            public void onItemClicked(String message) {
+                switch (message) {
+                    case "todo":
+                        TodoChecked = true;
+                        DoneChecked = false;
+                        ProjektChecked = false;
+                        break;
+                    case "done":
+                        TodoChecked = false;
+                        DoneChecked = true;
+                        ProjektChecked = false;
+                        break;
+                    case "projekt":
+                        ProjektChecked = true;
+                        TodoChecked = true;
+                        DoneChecked = false;
+                        break;
+                    default:
+                        ProjektChecked = false;
+                        TodoChecked = false;
+                        DoneChecked = false;
+                        break;
+                }
+                saveStateOfButtons();
+                mFilteringAdapter.notifyTaskEntrysChanged(message);
+                //makeAMassage(message);
             }
         };
+        RecyclerView.Adapter adapter;
 
-        RecyclerView recyclerView = findViewById(R.id.recycler_view);
-        RecyclerView.Adapter adapter = new SimpleDemoItemAdapter(clickListener);
-
+        adapter = mFilteringAdapter = new SimpleDemoItemAdapter(clickListener);
         setUpViewModel(adapter);
-        adapter = new DemoHeaderFooterAdapter(adapter, clickListener);
+        Context mContext = getApplicationContext();
+        adapter = new DemoHeaderFooterAdapter(adapter, clickListener, mContext);
+
+        //adapter = mFilteringAdapter = new MyItemFilteringAdapter(adapter);
 
         recyclerView.setAdapter(adapter);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         enableSwipeToDelete(recyclerView);
@@ -118,8 +152,28 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mDb = AppDatabase.getInstance(getApplicationContext());
     }
 
-    private void PerformStartFilterActivity() {
+    private void makeAMassage(String message) {
+       // ((SimpleDemoItemAdapter) adapter).setTasks();
+        //Todo hier fail
+        Toast.makeText(getApplicationContext(), "juhuuu", Toast.LENGTH_LONG).show();
+    }
 
+    private void saveStateOfButtons() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(_DoneChecked, DoneChecked);
+        editor.putBoolean(_ProjektChecked, ProjektChecked);
+        editor.putBoolean(_TodoChecked, TodoChecked);
+        Log.e("Save Booleans ", "TodoChecked: " + Boolean.toString(TodoChecked) + " DoneChecked: " + Boolean.toString(DoneChecked) + " ProjektChecked: " + Boolean.toString(ProjektChecked));
+        editor.apply();
+    }
+
+    private void loadStateOfButtons() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        DoneChecked = sharedPreferences.getBoolean(_DoneChecked, false);
+        ProjektChecked = sharedPreferences.getBoolean(_ProjektChecked, false);
+        TodoChecked = sharedPreferences.getBoolean(_TodoChecked, false);
+        Log.e("Load Booleans ", "TodoChecked: " + Boolean.toString(TodoChecked) + " DoneChecked: " + Boolean.toString(DoneChecked) + " ProjektChecked: " + Boolean.toString(ProjektChecked));
     }
 
     private void enableSwipeToDelete(RecyclerView recyclerView) {
@@ -128,13 +182,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
 
                 // Here is where you'll implement swipe to delete
-                AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        int position = viewHolder.getAdapterPosition();
-                        //Es funktioniert also lass ich das so mit "position -1"
-                        mDb.taskDao().deleteTask(listTaskEntries.get(position-1));
-                    }
+                AppExecutors.getInstance().diskIO().execute(() -> {
+                    int position = viewHolder.getAdapterPosition();
+                    //Es funktioniert also lass ich das so mit "position -1"
+                    mDb.taskDao().deleteTask(listTaskEntries.get(position - 1));
                 });
                 //Toast.makeText(getApplicationContext(), "Swiped", Toast.LENGTH_SHORT).show();
             }
@@ -168,13 +219,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             @Override
             public void onChanged(@Nullable final TaskEntry taskEntry) {
                 task.removeObserver(this);
-                AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        taskEntry.setId(itemId);
-                        taskEntry.setStatus(getStatus(taskEntry, aktionString));
-                        mDb.taskDao().updateTask(taskEntry);
-                    }
+                AppExecutors.getInstance().diskIO().execute(() -> {
+                    assert taskEntry != null;
+                    taskEntry.setId(itemId);
+                    taskEntry.setStatus(getStatus(taskEntry, aktionString));
+                    mDb.taskDao().updateTask(taskEntry);
                 });
             }
 
@@ -190,18 +239,42 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
     private void setUpViewModel(RecyclerView.Adapter adapter) {
+        loadStateOfButtons();
         MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-        RecyclerView.Adapter finalAdapter = adapter;
-        viewModel.getTasks().observe(this, taskEntries -> {
+        viewModel.getTasks().observe(this, (List<TaskEntry> taskEntries) -> {
+
             //Hier wird die Liste sortiert nach dem Namen der Kategorie der Routen
-            Collections.sort(taskEntries, (o1, o2) -> o1.getKategorieWall().compareTo(o2.getKategorieWall()));
+            Collections.sort(taskEntries, (TaskEntry o1, TaskEntry o2) -> o1.getKategorieWall().compareTo(o2.getKategorieWall()));
 
-            ((SimpleDemoItemAdapter) finalAdapter).setTasks(taskEntries);
+
+            //Filter für "Nur Done anzeigen"
+            if (DoneChecked) {
+                for (int i = 0; i < taskEntries.size(); i++) {
+                    if (!(taskEntries.get(i).getStatus().equals("f") || taskEntries.get(i).getStatus().equals("t"))) {
+                        taskEntries.remove(i);
+                        i--;
+                    }
+                }
+            } else if (ProjektChecked) {
+                for (int i = 0; i < taskEntries.size(); i++) {
+                    if (!taskEntries.get(i).getStatus().equals("p")) {
+                        taskEntries.remove(i);
+                        i--;
+                    }
+                }
+            } else if (TodoChecked) {
+                for (int i = 0; i < taskEntries.size(); i++) {
+                    if ((taskEntries.get(i).getStatus().equals("f") || taskEntries.get(i).getStatus().equals("t"))) {
+                        taskEntries.remove(i);
+                        i--;
+                    }
+                }
+            }
+
+            ((SimpleDemoItemAdapter) adapter).setTasks(taskEntries);
+            //((SimpleDemoItemAdapter) adapter).notifyTaskEntrysChanged("a");
             listTaskEntries = taskEntries;
-        });
-    }
 
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        });
     }
 }

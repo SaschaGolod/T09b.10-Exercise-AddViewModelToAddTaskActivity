@@ -35,8 +35,6 @@ abstract public class SwipeToDeleteCallback extends ItemTouchHelper.Callback {
         deleteDrawable = ContextCompat.getDrawable(mContext, R.drawable.ic_delete);
         intrinsicWidth = deleteDrawable.getIntrinsicWidth();
         intrinsicHeight = deleteDrawable.getIntrinsicHeight();
-
-
     }
 
 
