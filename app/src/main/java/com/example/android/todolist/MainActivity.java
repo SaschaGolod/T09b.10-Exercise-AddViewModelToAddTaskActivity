@@ -21,14 +21,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.android.todolist.adapters.DemoHeaderFooterAdapter;
-import com.example.android.todolist.adapters.MyItemFilteringAdapter;
 import com.example.android.todolist.adapters.OnListItemClickMessageListener;
 import com.example.android.todolist.adapters.SimpleDemoItemAdapter;
 import com.example.android.todolist.adapters.SwipeToDeleteCallback;
@@ -65,16 +60,16 @@ public class MainActivity extends AppCompatActivity {
     public static final String SHARED_PREFS = "shared_preferences";
     public static final String _TodoChecked = "TodoChecked";
     public static final String _DoneChecked = "DoneChecked";
-    public static final String _ProjektChecked = "ProjektChecked";
+    public static final String _ProjectChecked = "ProjectChecked";
 
     public static final String onItemClickedTodo = "todo";
     public static final String onItemClickedDone = "done";
-    public static final String onItemClickedProjekt = "projekt";
+    public static final String onItemClickedProject = "project";
     public static final String onItemClickedDefault = "x";
 
     public boolean TodoChecked;
     public boolean DoneChecked;
-    public boolean ProjektChecked;
+    public boolean ProjectChecked;
 
 
     @Override
@@ -115,20 +110,20 @@ public class MainActivity extends AppCompatActivity {
                     case onItemClickedTodo:
                         TodoChecked = true;
                         DoneChecked = false;
-                        ProjektChecked = false;
+                        ProjectChecked = false;
                         break;
                     case onItemClickedDone:
                         TodoChecked = false;
                         DoneChecked = true;
-                        ProjektChecked = false;
+                        ProjectChecked = false;
                         break;
-                    case onItemClickedProjekt:
-                        ProjektChecked = true;
+                    case onItemClickedProject:
+                        ProjectChecked = true;
                         TodoChecked = true;
                         DoneChecked = false;
                         break;
                     default:
-                        ProjektChecked = false;
+                        ProjectChecked = false;
                         TodoChecked = false;
                         DoneChecked = false;
                         break;
@@ -167,18 +162,18 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(_DoneChecked, DoneChecked);
-        editor.putBoolean(_ProjektChecked, ProjektChecked);
+        editor.putBoolean(_ProjectChecked, ProjectChecked);
         editor.putBoolean(_TodoChecked, TodoChecked);
-        Log.e("Save Booleans ", "TodoChecked: " + Boolean.toString(TodoChecked) + " DoneChecked: " + Boolean.toString(DoneChecked) + " ProjektChecked: " + Boolean.toString(ProjektChecked));
+        Log.e("Save Booleans ", "TodoChecked: " + Boolean.toString(TodoChecked) + " DoneChecked: " + Boolean.toString(DoneChecked) + " ProjektChecked: " + Boolean.toString(ProjectChecked));
         editor.apply();
     }
 
     private void loadStateOfButtons() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         DoneChecked = sharedPreferences.getBoolean(_DoneChecked, false);
-        ProjektChecked = sharedPreferences.getBoolean(_ProjektChecked, false);
+        ProjectChecked = sharedPreferences.getBoolean(_ProjectChecked, false);
         TodoChecked = sharedPreferences.getBoolean(_TodoChecked, false);
-        Log.e("Load Booleans ", "TodoChecked: " + Boolean.toString(TodoChecked) + " DoneChecked: " + Boolean.toString(DoneChecked) + " ProjektChecked: " + Boolean.toString(ProjektChecked));
+        Log.e("Load Booleans ", "TodoChecked: " + Boolean.toString(TodoChecked) + " DoneChecked: " + Boolean.toString(DoneChecked) + " ProjektChecked: " + Boolean.toString(ProjectChecked));
     }
 
     private void enableSwipeToDelete(RecyclerView recyclerView) {
@@ -260,7 +255,7 @@ public class MainActivity extends AppCompatActivity {
                         i--;
                     }
                 }
-            } else if (ProjektChecked) {
+            } else if (ProjectChecked) {
                 for (int i = 0; i < taskEntries.size(); i++) {
                     if (!taskEntries.get(i).getStatus().equals("p")) {
                         taskEntries.remove(i);
