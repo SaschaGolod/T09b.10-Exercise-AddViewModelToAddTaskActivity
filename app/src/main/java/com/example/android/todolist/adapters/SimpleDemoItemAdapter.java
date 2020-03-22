@@ -279,6 +279,7 @@ public class SimpleDemoItemAdapter extends RecyclerView.Adapter<SimpleDemoItemAd
         }else{
             filteredTaskEntries.addAll(fullTaskEntryList);
         }
+        //Todo here unkommend this line I need this
         notifyDataSetChanged();
     }
 

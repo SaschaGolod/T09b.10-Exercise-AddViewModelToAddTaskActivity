@@ -2,7 +2,6 @@ package com.example.android.todolist.adapters;
 
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,11 +18,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import static android.content.Context.MODE_PRIVATE;
-import static com.example.android.todolist.MainActivity.SHARED_PREFS;
-import static com.example.android.todolist.MainActivity._DoneChecked;
-import static com.example.android.todolist.MainActivity._ProjectChecked;
-import static com.example.android.todolist.MainActivity._TodoChecked;
 import static com.example.android.todolist.MainActivity.onItemClickedDefault;
 import static com.example.android.todolist.MainActivity.onItemClickedDone;
 import static com.example.android.todolist.MainActivity.onItemClickedProject;
@@ -32,16 +26,19 @@ import static com.example.android.todolist.MainActivity.onItemClickedTodo;
 public class DemoHeaderFooterAdapter
         extends AbstractHeaderFooterWrapperAdapter<DemoHeaderFooterAdapter.HeaderViewHolder, DemoHeaderFooterAdapter.FooterViewHolder>
         implements View.OnClickListener {
+
     private static final String TAG = "DemoHeaderFooterAdapter";
-
     private OnListItemClickMessageListener mOnItemClickListener;
-
     private Context mContext;
+    private boolean todoBool = false;
+    private boolean doneBool = false;
+    private boolean projectBool = false;
 
     static class HeaderViewHolder extends RecyclerView.ViewHolder {
         private CheckBox todoCheckbox;
         private CheckBox doneCheckbox;
         private CheckBox projektCheckbox;
+
 
         HeaderViewHolder(View itemView) {
             super(itemView);
@@ -145,24 +142,26 @@ public class DemoHeaderFooterAdapter
     @Override
     public void onBindHeaderItemViewHolder(@NonNull HeaderViewHolder holder, int localPosition) {
         applyFullSpanForStaggeredGridLayoutManager(holder);
+
         //Maybe here is the mistake?
-        Log.i(TAG, "onBindHeaderItemViewHolder");
-        Log.i(TAG, "GetBooleansStatefromSharedPrefs");
         //Reload State of SharedPreferences
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        holder.doneCheckbox.setChecked(sharedPreferences.getBoolean(_DoneChecked, false));
-        holder.projektCheckbox.setChecked(sharedPreferences.getBoolean(_ProjectChecked, false));
-        holder.todoCheckbox.setChecked(sharedPreferences.getBoolean(_TodoChecked, false));
-        Log.i(TAG, "SetCheckBoxesState " + Boolean.toString(sharedPreferences.getBoolean(_TodoChecked, false)));
-        Log.i(TAG, "SetCheckBoxesState " + Boolean.toString(sharedPreferences.getBoolean(_DoneChecked, false)));
-        Log.i(TAG, "SetCheckBoxesState " + Boolean.toString(sharedPreferences.getBoolean(_ProjectChecked, false)));
+        //This following 3 lines causes error :| how to manage this?
+        holder.todoCheckbox.setChecked(false);
+        holder.doneCheckbox.setChecked(false);
+        holder.projektCheckbox.setChecked(false);
 
         holder.todoCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
+                    todoBool = false;
+                    doneBool = false;
+                    projectBool = false;
                     mOnItemClickListener.onItemClicked(onItemClickedDefault);
                 }else{
+                    todoBool = true;
+                    doneBool = false;
+                    projectBool = false;
                     mOnItemClickListener.onItemClicked(onItemClickedTodo);
                 }
             }
@@ -171,10 +170,14 @@ public class DemoHeaderFooterAdapter
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
-                    buttonView.setChecked(true);
+                    todoBool = false;
+                    doneBool = true;
+                    projectBool = false;
                     mOnItemClickListener.onItemClicked(onItemClickedDone);
                 }else{
-                    buttonView.setChecked(false);
+                    todoBool = false;
+                    doneBool = false;
+                    projectBool = false;
                     mOnItemClickListener.onItemClicked(onItemClickedDefault);
                 }
             }
@@ -183,10 +186,14 @@ public class DemoHeaderFooterAdapter
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
-                    buttonView.setChecked(true);
+                    todoBool = true;
+                    doneBool = false;
+                    projectBool = true;
                     mOnItemClickListener.onItemClicked(onItemClickedProject);
                 }else{
-                    buttonView.setChecked(false);
+                    todoBool = true;
+                    doneBool = false;
+                    projectBool = false;
                     mOnItemClickListener.onItemClicked(onItemClickedTodo);
                 }
             }
