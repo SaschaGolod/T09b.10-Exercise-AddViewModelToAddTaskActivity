@@ -2,16 +2,14 @@ package com.example.android.todolist.database;
 
 import com.example.android.todolist.R;
 
-import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @Entity(tableName = "task")
 public class TaskEntry {
@@ -145,6 +143,7 @@ public class TaskEntry {
 
     public String getTags() {
         return tags;
+
     }
 
     public String getStatus() {

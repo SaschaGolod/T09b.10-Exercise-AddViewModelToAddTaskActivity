@@ -73,6 +73,7 @@ public class AddTaskActivity extends AppCompatActivity {
     // Member variable for the Database
     private AppDatabase mDb;
     private String compareValue;
+    private TaskEntry _taskEntry;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,10 +109,19 @@ public class AddTaskActivity extends AppCompatActivity {
                         viewModel.getTask().removeObserver(this);
                         Log.d(TAG, "Receiving database update from LiveData");
                         populateUI(taskEntry);
+                        saveTaskEntry(taskEntry);
+                    }
+
+                    private void saveTaskEntry(TaskEntry taskEntry) {
+                        _taskEntry = taskEntry;
                     }
                 });
             }
         }
+    }
+
+    private TaskEntry getTaskEntry() {
+        return _taskEntry;
     }
 
     @Override
@@ -236,10 +246,11 @@ public class AddTaskActivity extends AppCompatActivity {
      */
     public void onSaveButtonClicked() {
         String description = getNameFromView();
+        String tags = getTaskEntry().getStatus();
         int priority = getPriorityFromViews();
         Date date = new Date();
 
-        final TaskEntry task = new TaskEntry(description, priority, "tags", getResources().getString(R.string.boulderitem_status_default_value), "score", mStoneColorString, mWallStart, mWallEnd, "setter", date);
+        final TaskEntry task = new TaskEntry(description, priority, "tags", tags, "score", mStoneColorString, mWallStart, mWallEnd, "setter", date);
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {

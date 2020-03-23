@@ -230,14 +230,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpViewModel(RecyclerView.Adapter adapter) {
-        loadStateOfButtons();
         MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         viewModel.getTasks().observe(this, (List<TaskEntry> taskEntries) -> {
 
             //Hier wird die Liste sortiert nach dem Namen der Kategorie der Routen
             Collections.sort(taskEntries, (TaskEntry o1, TaskEntry o2) -> o1.getKategorieWall().compareTo(o2.getKategorieWall()));
 
-
+            //Hier wird sortiert
+            /*
             //Filter für "Nur Done anzeigen"
             if (DoneChecked) {
                 for (int i = 0; i < taskEntries.size(); i++) {
@@ -261,10 +261,28 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
+              */
 
             ((SimpleDemoItemAdapter) adapter).setTasks(taskEntries);
+            loadStateOfButtons();
+            mFilteringAdapter.notifyTaskEntrysChanged(getMessageFromStateOfButtons());
             listTaskEntries = taskEntries;
 
         });
+    }
+
+    private String getMessageFromStateOfButtons() {
+        if(DoneChecked&ProjectChecked)
+        {
+            return onItemClickedProject;
+        }
+        else if(TodoChecked)
+        {
+            return onItemClickedTodo;
+        }
+        else{
+            return onItemClickedDefault;
+        }
+
     }
 }
