@@ -146,9 +146,9 @@ public class DemoHeaderFooterAdapter
         //Maybe here is the mistake?
         //Reload State of SharedPreferences
         //This following 3 lines causes error :| how to manage this?
-        holder.todoCheckbox.setChecked(false);
-        holder.doneCheckbox.setChecked(false);
-        holder.projektCheckbox.setChecked(false);
+        //holder.todoCheckbox.setChecked(false);
+        //holder.doneCheckbox.setChecked(false);
+        //holder.projektCheckbox.setChecked(false);
 
         holder.todoCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

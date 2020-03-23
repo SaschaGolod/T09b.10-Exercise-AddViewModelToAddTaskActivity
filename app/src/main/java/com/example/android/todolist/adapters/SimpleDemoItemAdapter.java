@@ -145,17 +145,17 @@ public class SimpleDemoItemAdapter extends RecyclerView.Adapter<SimpleDemoItemAd
         }
 
         holder.btn_flash.setOnClickListener(v -> {
-            int elementId = fullTaskEntryList.get(position).getId();
+            int elementId = filteredTaskEntries.get(position).getId();
             mOnItemClickListener.OnFlashClicked(elementId);
         });
 
         holder.btn_top.setOnClickListener(v -> {
-            int elementId = fullTaskEntryList.get(position).getId();
+            int elementId = filteredTaskEntries.get(position).getId();
             mOnItemClickListener.OnTopClicked(elementId);
         });
 
         holder.btn_projekt.setOnClickListener(v -> {
-            int elementId = fullTaskEntryList.get(position).getId();
+            int elementId = filteredTaskEntries.get(position).getId();
             mOnItemClickListener.OnProjektClicked(elementId);
         });
 
